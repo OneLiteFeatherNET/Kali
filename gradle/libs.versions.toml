@@ -28,7 +28,7 @@ sentryJul = { group = "io.sentry", name = "sentry-jul", version.ref = "sentry" }
 junitApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
 junitEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
 mockitoCore = { group =" org.mockito", name = "mockito-core", version.ref = "mockito"}
-mockitoJuit = { group =" org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito"}
+mockitoJunit = { group =" org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito"}
 
 [bundles]
 
