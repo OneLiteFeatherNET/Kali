@@ -1,6 +1,9 @@
+import org.sonarqube.gradle.SonarQubeTask
+
 plugins {
     java
     alias(libs.plugins.sonarqube)
+    jacoco
 }
 
 group = "org.example" // TODO: Change me
@@ -31,11 +34,23 @@ tasks {
         options.release.set(17)
     }
 
+    jacocoTestReport {
+        dependsOn(rootProject.tasks.test)
+        reports {
+            xml.required.set(true)
+        }
+    }
+
     test {
+        finalizedBy(rootProject.tasks.jacocoTestReport)
         useJUnitPlatform()
         testLogging {
             events("passed", "skipped", "failed")
         }
+    }
+
+    getByName<SonarQubeTask>("sonarqube") {
+        dependsOn(rootProject.tasks.test)
     }
 }
 
