@@ -9,6 +9,7 @@ shadow = "7.1.2"
 adventure = "4.11.0"
 # Testing
 junit = "5.9.0"
+mockito = "4.7.0"
 # Quality Check
 sonarqube = "3.4.0.2513"
 # Minestom
@@ -26,6 +27,8 @@ sentryJul = { group = "io.sentry", name = "sentry-jul", version.ref = "sentry" }
 # Testing
 junitApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
 junitEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+mockitoCore = { group =" org.mockito", name = "mockito-core", version.ref = "mockito"}
+mockitoJuit = { group =" org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito"}
 
 [bundles]
 
