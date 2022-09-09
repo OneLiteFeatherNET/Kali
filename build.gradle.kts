@@ -6,8 +6,8 @@ plugins {
     jacoco
 }
 
-group = "org.example" // TODO: Change me
-val baseVersion = "0.0.1-SNAPSHOT" // TODO: Change me
+group = "net.theevilreaper.kali" // TODO: Change me
+val baseVersion = "1.0.0-SNAPSHOT" // TODO: Change me
 val sonarKey = "insert-sonar-key" // TODO: Change me
 
 java {
@@ -21,8 +21,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly(libs.minestom)
+    implementation(libs.minestom)
+    implementation(libs.adventureMinimessage)
+    implementation(libs.morphia)
+    implementation(libs.canis)
 
+    compileOnly(libs.minestom)
     testImplementation(libs.minestom)
     testImplementation(libs.junitApi)
     testRuntimeOnly(libs.junitEngine)
