@@ -13,26 +13,22 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.entity.EntityFinder;
-import net.theevilreaper.dungeon.DungeonEditor;
+import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
 
+import static net.theevilreaper.dungeon.util.Messages.*;
+
 /**
  * @author theEvilReaper
  * @version 1.0.0
- * @since
+ * @since 1.0.0
  **/
 public class GameModeCommand extends Command {
 
-    private static final Component NO_PLAYER = DungeonEditor.PREFIX
-            .append(Component.text("No player", NamedTextColor.RED));
-
-    private static final Component NO_PLAYER_FOUND = DungeonEditor.PREFIX
-            .append(Component.text("No player found", NamedTextColor.RED));
-
-    private static final Component USAGE = DungeonEditor.PREFIX
+    private static final Component USAGE = Messages.PREFIX
             .append(Component.text("Usage: /gamemode <gm> [targets]", NamedTextColor.RED));
 
     public GameModeCommand() {
@@ -74,7 +70,7 @@ public class GameModeCommand extends Command {
      */
     private void executeOthers(@NotNull CommandSender sender, @NotNull GameMode mode, @NotNull List<Entity> entities) {
         if (entities.isEmpty()) {
-            sender.sendMessage(NO_PLAYER_FOUND);
+            sender.sendMessage(PLAYER_NOT_FOUND);
         } else for (Entity entity : entities) {
             if (entity instanceof Player player) {
                 if (player == sender) {
@@ -87,7 +83,7 @@ public class GameModeCommand extends Command {
                     Component playerName = player.getDisplayName() == null ? player.getName() : player.getDisplayName();
 
                     //Send a message to the changed player and the sender
-                    player.sendMessage(DungeonEditor.PREFIX.append(Component.text("Changed gamemode to ", NamedTextColor.GRAY).append(gamemodeComponent)));
+                    player.sendMessage(PREFIX.append(Component.text("Changed gamemode to ", NamedTextColor.GRAY).append(gamemodeComponent)));
                     sender.sendMessage(Component.translatable("commands.gamemode.success.other", playerName, gamemodeComponent), MessageType.SYSTEM);
                 }
             }
@@ -107,6 +103,6 @@ public class GameModeCommand extends Command {
         Component gamemodeComponent = Component.translatable(gamemodeString, NamedTextColor.GREEN);
 
         //Send the translated message to the player.
-        sender.sendMessage(DungeonEditor.PREFIX.append(Component.text("Changed gamemode to ", NamedTextColor.GRAY).append(gamemodeComponent)));
+        sender.sendMessage(PREFIX.append(Component.text("Changed gamemode to ", NamedTextColor.GRAY).append(gamemodeComponent)));
     }
 }

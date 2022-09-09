@@ -13,7 +13,6 @@ import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
-import static net.theevilreaper.dungeon.DungeonEditor.PREFIX;
 import static net.theevilreaper.dungeon.util.Messages.NO_INSTANCE_OWNER;
 import static net.theevilreaper.dungeon.util.Messages.PLAYER_NOT_FOUND;
 
@@ -26,13 +25,13 @@ import static net.theevilreaper.dungeon.util.Messages.PLAYER_NOT_FOUND;
 public class TransferCommand extends Command {
 
     private static final Component NOT_SAME_EDITOR_INSTANCE =
-            PREFIX.append(Component.text(
+            Messages.PREFIX.append(Component.text(
                     "Can't set the owner because the target is not on the same instance!",
                     NamedTextColor.RED
             ));
 
     private static final Component COMMAND_USAGE =
-            PREFIX.append(Component.text("Please use", NamedTextColor.GRAY))
+            Messages.PREFIX.append(Component.text("Please use", NamedTextColor.GRAY))
                     .append(Component.text("/transfer <name>", NamedTextColor.YELLOW));
 
 
@@ -77,8 +76,7 @@ public class TransferCommand extends Command {
             }
 
             editInstance.setOwner(newOwner);
-            newOwner.sendMessage(PREFIX
-                    .append(Component.text("You are now the owner of the instance", NamedTextColor.RED)));
+            newOwner.sendMessage(NO_INSTANCE_OWNER);
 
             return;
         }
