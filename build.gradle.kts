@@ -16,6 +16,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://jitpack.io")
 }
@@ -25,6 +26,7 @@ dependencies {
     implementation(libs.adventureMinimessage)
     implementation(libs.morphia)
     implementation(libs.canis)
+    implementation(libs.aves)
 
     compileOnly(libs.minestom)
     testImplementation(libs.minestom)
