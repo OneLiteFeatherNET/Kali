@@ -90,7 +90,7 @@ public class EditInstance extends InstanceContainer {
     private final Consumer<EditInstance> containerConsumer;
 
     public EditInstance(@NotNull Consumer<EditInstance> containerConsumer) {
-        super(UUID.randomUUID(), KaliDimension.INSTANCE);
+        super(UUID.randomUUID(), KaliDimension.KALI_DIMENSION);
         this.originPath = DungeonEditor.ROOT_PATH.resolve("rooms");
         this.fileHandler = new GsonFileHandler(new Gson());
         this.bossBar = BossBar.bossBar(Component.text("Loading...", NamedTextColor.RED), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
