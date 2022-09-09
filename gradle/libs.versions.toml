@@ -21,6 +21,9 @@ morphia = "2.2.8"
 # Canis
 canis = "master-SNAPSHOT"
 
+# Aves
+aves = "1.2.0-SNAPSHOT"
+
 [libraries]
 
 # Minestom
@@ -41,6 +44,9 @@ morphia = { group = "dev.morphia.morphia", name = "morphia-core", version.ref = 
 
 # Canis
 canis = { group = "com.github.theEvilReaper", name = "Canis", version.ref = "canis" }
+
+# Aves
+aves = { group = "de.icevizion.lib", name = "Aves", version.ref = "aves" }
 
 [bundles]
 
