@@ -12,7 +12,6 @@ import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.theevilreaper.dungeon.data.region.RegionType;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.items.Items;
 import org.jetbrains.annotations.Contract;
@@ -32,11 +31,6 @@ public class RegionInventory {
         int[] slots = LayoutCalculator.quad(10, 43);
 
         layout.blank(slots);
-
-        for (int i = 0; i < RegionType.getValues().length; i++) {
-            var region = RegionType.getValues()[i];
-            layout.setItem(slots[i], getStack(region.getMaterial(), region.getName()), this::handleClick);
-        }
 
         this.builder.setLayout(layout);
         this.builder.register();
@@ -63,11 +57,7 @@ public class RegionInventory {
             return;
         }
 
-        var regionType = RegionType.getByMaterial(result.getClickedItem().material());
-
-        if (regionType == null) return;
-
-        editInstance.setRegionType(regionType);
+        editInstance.setRegionType();
         player.closeInventory();
     }
 

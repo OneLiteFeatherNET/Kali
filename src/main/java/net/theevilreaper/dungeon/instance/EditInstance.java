@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.InstanceContainer;
@@ -18,8 +17,6 @@ import net.minestom.server.network.packet.server.play.TimeUpdatePacket;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.PacketUtils;
 import net.theevilreaper.dungeon.DungeonEditor;
-import net.theevilreaper.dungeon.data.region.BlockRegion;
-import net.theevilreaper.dungeon.data.region.RegionType;
 import net.theevilreaper.dungeon.data.room.AbstractRoom;
 import net.theevilreaper.dungeon.util.KaliDimension;
 import org.jetbrains.annotations.Contract;
@@ -150,22 +147,13 @@ public class EditInstance extends InstanceContainer {
         return this.createRoom();
     }
 
-    public void setRegionType(@NotNull RegionType regionType) {
-        this.abstractRoom.setRoomType(regionType);
+    public void setRegionType() {
     }
 
     public boolean createRoom() {
         if (this.firstPos == null || this.secondPos == null) {
             return false;
         }
-
-        if (abstractRoom == null) {
-            this.abstractRoom = new AbstractRoom();
-        }
-
-        var region = new BlockRegion(new Pos(this.firstPos), new Pos(this.secondPos));
-
-        this.abstractRoom.addRegion(region);
 
         this.secondPos = null;
         this.firstPos = null;
