@@ -86,7 +86,6 @@ public class RoomSelector {
         int counter = START_SLOT;
 
         for (var roomEntry : this.floor.getRooms().entrySet()) {
-            layout.setItem(counter, roomEntry.getValue().getItemStack(), this::handleClick);
 
             if (counter + 1 == InventoryType.CHEST_5_ROW.getSize() + 1) {
                 System.out.println("Floor has more items to add skipping " + (this.floor.getRooms().size() - counter) + " rooms");
