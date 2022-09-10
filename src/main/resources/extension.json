@@ -1,0 +1,8 @@
+{
+  "entrypoint": "net.theevilreaper.dungeon.DungeonEditor",
+  "name": "DungeonEditor",
+  "version": "1.0.0",
+  "dependencies": [
+    "Aves"
+  ]
+}
