@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import de.icevizion.aves.file.GsonFileHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
@@ -73,8 +72,6 @@ public class DungeonEditor extends Extension {
     private static final String DATABASE_FILE = "database.json";
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
-    public static final Consumer<CancellableEvent> CANCEL_CONSUMER = cancellableEvent -> cancellableEvent.setCancelled(true);
-
     public static final Gson GSON = new GsonBuilder().create();
     private static final Logger LOGGER = LoggerFactory.getLogger(DungeonEditor.class);
 
@@ -82,10 +79,6 @@ public class DungeonEditor extends Extension {
 
     public static final Path ROOT_PATH = Paths.get("");
 
-    public static final Component PREFIX =
-            LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    "§7[§eEditor§7] "
-            );
     private FloorProvider floorProvider;
     private FloorInventory floorInventory;
     private final EditInstanceManager editInstanceManager;
@@ -195,6 +188,7 @@ public class DungeonEditor extends Extension {
      * Registers some listener as global listener into the server event node.
      */
     private void registerEvents(boolean created) {
+        Consumer<CancellableEvent> cancelConsumer = event -> event.setCancelled(true);
         var eventHandler = MinecraftServer.getGlobalEventHandler();
         if (created) {
             eventHandler.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(defaultInstance));
@@ -204,7 +198,7 @@ public class DungeonEditor extends Extension {
         eventHandler.addListener(PlayerSpawnEvent.class, new PlayerSpawnListener(locationProvider, sidebarViewer, items));
         eventHandler.addListener(PlayerBlockBreakEvent.class, new BlockBreakListener(regionInventory));
         eventHandler.addListener(PlayerChatEvent.class, new PlayerChatListener());
-        eventHandler.addListener(PlayerBlockPlaceEvent.class, CANCEL_CONSUMER::accept);
+        eventHandler.addListener(PlayerBlockPlaceEvent.class, cancelConsumer::accept);
 
         eventHandler.addListener(AddEntityToInstanceEvent.class, event -> {
            if (event.getInstance() instanceof EditInstance editInstance && event.getEntity() instanceof Player player) {
@@ -221,8 +215,8 @@ public class DungeonEditor extends Extension {
             }
         });
 
-        eventHandler.addListener(ItemDropEvent.class, CANCEL_CONSUMER::accept);
-        eventHandler.addListener(PickupItemEvent.class, CANCEL_CONSUMER::accept);
+        eventHandler.addListener(ItemDropEvent.class, cancelConsumer::accept);
+        eventHandler.addListener(PickupItemEvent.class, cancelConsumer::accept);
         eventHandler.addListener(PlayerDeathEvent.class, event -> event.setChatMessage(Component.empty()));
         eventHandler.addListener(PlayerDisconnectEvent.class, new PlayerDisconnectListener(this.sidebarViewer,this.floorCreateService));
         eventHandler.addListener(PlayerUseItemEvent.class, new ItemListener(floorInventory, locationProvider, defaultInstance));
