@@ -11,12 +11,11 @@ import java.util.function.Consumer;
 /**
  * @author theEvilReaper
  * @version 1.0.0
- * @since
+ * @since 1.0.0
  **/
 public class PlayerDisconnectListener implements Consumer<PlayerDisconnectEvent> {
 
     private final SidebarViewer sidebarViewer;
-
     private final FloorCreateService floorCreateService;
 
     public PlayerDisconnectListener(@NotNull SidebarViewer sidebarViewer, @NotNull FloorCreateService floorCreateService) {

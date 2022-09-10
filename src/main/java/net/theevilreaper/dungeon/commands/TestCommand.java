@@ -11,13 +11,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author theEvilReaper
  * @version 1.0.0
- * @since
+ * @since 1.0.0
  **/
-
 public class TestCommand extends Command {
 
     private final RegionInventory regionInventory;
-
 
     public TestCommand(@NotNull RegionInventory regionInventory) {
         super("tt");
