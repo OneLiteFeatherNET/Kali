@@ -30,7 +30,6 @@ public class LocationProvider {
     private final FileHandler fileHandler;
     private BaseMap map;
 
-
     public LocationProvider(@NotNull Path rootMapPath) {
         this.rootPath = rootMapPath.resolve("world");
         var posAdapter = new PositionGsonAdapter();
