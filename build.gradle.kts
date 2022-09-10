@@ -4,10 +4,11 @@ plugins {
     java
     alias(libs.plugins.sonarqube)
     jacoco
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-group = "net.theevilreaper.kali" // TODO: Change me
-val baseVersion = "1.0.0-SNAPSHOT" // TODO: Change me
+group = "net.theevilreaper.kali"
+val baseVersion = "1.0.0-SNAPSHOT"
 val sonarKey = "insert-sonar-key" // TODO: Change me
 
 java {
@@ -22,11 +23,10 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.minestom)
     implementation(libs.adventureMinimessage)
     implementation(libs.morphia)
     implementation(libs.canis)
-    implementation(libs.aves)
+    compileOnly(libs.aves)
 
     compileOnly(libs.minestom)
     testImplementation(libs.minestom)
