@@ -19,6 +19,7 @@ import net.minestom.server.utils.PacketUtils;
 import net.theevilreaper.dungeon.DungeonEditor;
 import net.theevilreaper.dungeon.data.room.AbstractRoom;
 import net.theevilreaper.dungeon.util.KaliDimension;
+import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +37,7 @@ public class EditInstance extends InstanceContainer {
 
     public static final Tag<Byte> RESET_TAG = Tag.Byte("reset");
 
-    private static final Component RESET_COMPONENT = DungeonEditor.PREFIX.append(
+    private static final Component RESET_COMPONENT = Messages.PREFIX.append(
             LegacyComponentSerializer.legacySection().deserialize("§cThis instance will be deleted in §65 §cMinutes ")
                     .append(Component.text("[", NamedTextColor.GRAY)
                             .append(Component.text("Reset").color(TextColor.fromHexString("#99ff33"))))
