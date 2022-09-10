@@ -39,6 +39,9 @@ public class Messages {
                     NamedTextColor.RED
             ));
 
+    public static final Component NO_PLAYER =
+            PREFIX.append(Component.text("The command works only for players", NamedTextColor.RED));
+
     public static final Component NO_INSTANCE_OWNER =
             PREFIX.append(Component.text(
                     "You can not execute this command because you are not the owner of this instance!",
