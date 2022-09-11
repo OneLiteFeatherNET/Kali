@@ -1,15 +1,39 @@
-# Zosma
+## Kali (Dungeon Editor)
+With the editor players gets the ability to setup or update rooms for a specific floor in the dungeon.
+That means a player can create different regions in a room and adjust some parameters of them.
+The build process of a room is not possible with this extension. For that a team should use a normal Spigot or PaperMC server.
 
-## How to create a sonarqube key
-1. Go to https://sonarqube.themeinerlp.dev
-2. Press login with gitlab
-   1. Repeat this step many times(Home -> Gitlab)
-3. Click on create project(with gitlab icon)
-4. Choose your project and press set up
-5. Press at "With GitLab CI"
-6. Choose Other
-7. Copy the value of `sonar.projectKey`
-8. Press continue
-9. Press continue
-10. Finish this tutorial
-11. Go to your project and replace the value of `sonarKey` 
+
+
+## Permissions
+Some functionality requires permissions to use it.
+The following list shows all current available permissions:
+
+- editor.floor.delete
+
+## Database
+
+The execution of the editor requires a connection to a MongoDB server.
+The extension itself uses the "Morphia" driver from MongoDB which allows us to use ORM.
+
+In the Kali folder should be a database.json file with these following entries:
+
+```json
+{
+    "host": "host",
+    "port": 12900,
+    "user": "user",
+    "password": "password",
+    "database": "database"
+}
+```
+
+## Dependencies
+
+Kali requires some dependencies which should be installed on a running Minestom server:
+- Aves
+
+These dependencies Kali includes automatically:
+- Morphia
+- Canis
+- adventure-text-minimessage (should be checked if minestom includes that now)
