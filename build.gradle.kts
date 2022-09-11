@@ -4,7 +4,7 @@ plugins {
     java
     alias(libs.plugins.sonarqube)
     jacoco
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    alias(libs.plugins.shadow)
 }
 
 group = "net.theevilreaper.kali"
@@ -26,13 +26,16 @@ dependencies {
     implementation(libs.adventureMinimessage)
     implementation(libs.morphia)
     implementation(libs.canis)
-    compileOnly(libs.aves)
 
+    compileOnly(libs.aves)
     compileOnly(libs.minestom)
+
+    testImplementation(libs.aves)
     testImplementation(libs.minestom)
     testImplementation(libs.junitApi)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoJunit)
+
     testRuntimeOnly(libs.junitEngine)
 }
 
