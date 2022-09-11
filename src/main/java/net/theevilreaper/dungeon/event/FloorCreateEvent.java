@@ -18,7 +18,6 @@ public final class FloorCreateEvent implements PlayerEvent, CancellableEvent {
 
     private final Player creator;
     private final Floor floor;
-
     private boolean cancelled;
 
     /**
