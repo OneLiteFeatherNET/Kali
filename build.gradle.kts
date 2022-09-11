@@ -9,7 +9,7 @@ plugins {
 
 group = "net.theevilreaper.kali"
 val baseVersion = "1.0.0-SNAPSHOT"
-val sonarKey = "insert-sonar-key" // TODO: Change me
+val sonarKey = "dungeon_projects_kali_AYMuSYZaWr3PlWoLMa-G"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
