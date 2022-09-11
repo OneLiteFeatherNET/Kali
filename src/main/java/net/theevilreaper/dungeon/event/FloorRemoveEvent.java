@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  * @version 1.0.0
  */
+@SuppressWarnings("java:S6206")
 public final class FloorRemoveEvent implements PlayerEvent {
 
     private final Player player;
