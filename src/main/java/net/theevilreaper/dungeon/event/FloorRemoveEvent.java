@@ -5,10 +5,15 @@ import net.minestom.server.event.trait.PlayerEvent;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The event will be called when a floor should be removed.
+ * @author theEvilReaper
+ * @since 1.0.0
+ * @version 1.0.0
+ */
 public final class FloorRemoveEvent implements PlayerEvent {
 
     private final Player player;
-
     private final Floor floor;
 
     /**
@@ -39,4 +44,3 @@ public final class FloorRemoveEvent implements PlayerEvent {
         return this.player;
     }
 }
-
