@@ -20,11 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class FloorProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FloorProvider.class);
-
     private final Lock lock;
-
     private Set<Floor> floors;
-
     private FloorDatabaseHandler floorDatabaseHandler;
 
     public FloorProvider(MongoDatabase database) {
@@ -39,7 +36,6 @@ public class FloorProvider {
         this.floors = new HashSet<>();
 
         if (this.floorDatabaseHandler == null) {
-            System.out.println("NULL");
             return floors;
         }
 
@@ -47,7 +43,7 @@ public class FloorProvider {
 
         if (!databaseFloors.isEmpty())  {
             this.floors.addAll(databaseFloors);
-            LOGGER.info("Found " + floors.size() + " Floor objects in the database");
+            LOGGER.info("Found {} Floor objects in the database", floors.size());
         }
         return floors;
     }
