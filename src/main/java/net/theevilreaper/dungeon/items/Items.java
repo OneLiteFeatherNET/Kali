@@ -21,7 +21,6 @@ public class Items {
 
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
             .displayName(Component.empty()).build();
-
     private final ItemStack regionTool;
     private final ItemStack floorSelector;
 
@@ -30,7 +29,6 @@ public class Items {
                 .displayName(Component.text("Regions", NamedTextColor.YELLOW))
                 .meta(itemMetaBuilder
                         -> itemMetaBuilder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES)).build();
-
         this.floorSelector = ItemStack.builder(Material.CARTOGRAPHY_TABLE)
                 .displayName(Component.text("Floors", NamedTextColor.RED))
                 .build();
@@ -69,10 +67,9 @@ public class Items {
      * @param type The given type from the inventory
      */
     public static void setDecorationLine(@NotNull InventoryLayout layout, @NotNull InventoryType type) {
-        if (type.getSize() > layout.getContents().length) {
+        if (type.getSize() != layout.getContents().length) {
             throw new IllegalArgumentException("The given type size is higher then the size from the inventory");
         }
-
         layout.setNonClickItems(LayoutCalculator.fillRow(type), DECORATION);
     }
 }
