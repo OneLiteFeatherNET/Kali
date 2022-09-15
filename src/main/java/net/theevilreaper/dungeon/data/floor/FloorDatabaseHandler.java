@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The class handles all operation to delete, add or update a floor in the database.
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 public class FloorDatabaseHandler implements DatabaseEntity<Floor> {
 
     private static final Logger FLOOR_LOGGER = LoggerFactory.getLogger(FloorDatabaseHandler.class);
-
     private final MongoDatabase mongoDatabase;
 
     public FloorDatabaseHandler(@NotNull MongoDatabase mongoDatabase) {
@@ -42,12 +40,12 @@ public class FloorDatabaseHandler implements DatabaseEntity<Floor> {
         var result = this.mongoDatabase.getDatastore().find(Floor.class)
                 .update(UpdateOperators.set(model)).execute();
         if (result.getMatchedCount() == 1 && result.getModifiedCount() == 1) {
-            FLOOR_LOGGER.warn("Unable to execute update on floor object " + model);
+            FLOOR_LOGGER.warn("Unable to execute update on floor object {}", model);
         }
      }
 
     @Override
     public List<Floor> getAllEntries() {
-        return this.mongoDatabase.getDatastore().find(Floor.class).stream().collect(Collectors.toList());
+        return this.mongoDatabase.getDatastore().find(Floor.class).stream().toList();
     }
 }
