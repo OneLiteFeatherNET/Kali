@@ -124,7 +124,7 @@ public class DungeonEditor extends Extension {
         jsonObject.ifPresent(object -> this.mongoDatabase = new MongoDatabase(jsonObject.get()));
         this.floorProvider = new FloorProvider(mongoDatabase);
         this.floorInventory = new FloorInventory(editInstanceManager, locationProvider, floorProvider, floorCreateService, containerConsumer);
-        this.floorCreateService = new FloorCreateService(floorProvider);
+        this.floorCreateService = new FloorCreateService();
         var created = false;
         if (MinecraftServer.getInstanceManager().getInstances().isEmpty()) {
             LOGGER.info("Found no existing instance. Creating a new instance");
