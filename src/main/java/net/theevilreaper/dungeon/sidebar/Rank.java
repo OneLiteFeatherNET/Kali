@@ -17,11 +17,8 @@ public enum Rank {
     REVIEWER("Viewer", TextColor.fromHexString("#7aee18"), Component.text("Viewer").append(Component.space()), NamedTextColor.GREEN);
 
     private static final Rank[] VALUES = values();
-
     private final String name;
-
     private final TextColor textColor;
-
     private final Component prefix;
     private final NamedTextColor teamColor;
 
