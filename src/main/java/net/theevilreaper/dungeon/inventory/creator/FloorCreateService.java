@@ -4,7 +4,6 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.network.packet.client.play.ClientNameItemPacket;
-import net.theevilreaper.dungeon.data.floor.FloorProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -19,15 +18,10 @@ import java.util.UUID;
 public class FloorCreateService {
 
     private static final int MAX_NAME_SIZE = 25;
-
     private final Map<UUID, FloorCreateInventory> openSelections;
 
-    private final FloorProvider floorProvider;
-
-    public FloorCreateService(@NotNull FloorProvider floorProvider) {
-        this.floorProvider = floorProvider;
+    public FloorCreateService() {
         this.openSelections = new HashMap<>();
-
         MinecraftServer.getPacketListenerManager().setListener(ClientNameItemPacket.class, (packet, player) -> {
             if (isAnvilGui(player)) {
                 var inputString = packet.itemName();
@@ -46,7 +40,7 @@ public class FloorCreateService {
      */
     @NotNull
     public FloorCreateInventory getCreateBuilder(@NotNull Player player) {
-        return this.openSelections.computeIfAbsent(player.getUuid(), uuid -> new FloorCreateInventory(player, this.floorProvider));
+        return this.openSelections.computeIfAbsent(player.getUuid(), uuid -> new FloorCreateInventory(player));
     }
 
     /**
