@@ -21,6 +21,7 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 1.0.0
  */
+@SuppressWarnings("java:S3252")
 public class DungeonObject implements Serializable {
 
     @Id
@@ -62,7 +63,7 @@ public class DungeonObject implements Serializable {
 
     public DungeonObject(@NotNull String name) {
         this.name = name;
-        this.material = Material.STONE;
+        this.material = DEFAULT;
     }
 
     public void setObjectId(@NotNull ObjectId objectId) {

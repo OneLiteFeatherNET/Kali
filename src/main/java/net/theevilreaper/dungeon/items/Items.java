@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  * @version 1.0.0
  */
+@SuppressWarnings("java:S3252")
 public class Items {
 
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)

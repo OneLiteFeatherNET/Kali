@@ -13,6 +13,7 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 1.0.0
  **/
+@SuppressWarnings("java:S3252")
 public class BlockBreakListener implements Consumer<PlayerBlockBreakEvent> {
 
     private final RegionInventory regionInventory;
