@@ -34,7 +34,7 @@ public class Floor extends DungeonObject {
         Component.empty()
     );
 
-    private transient final Lock lock;
+    private final transient Lock lock;
 
     @Property("external")
     private String externalName;
@@ -42,7 +42,7 @@ public class Floor extends DungeonObject {
     private transient HashMap<String, AbstractRoom> rooms;
 
     public Floor() {
-        super("empty", Material.DIRT);
+        super("empty");
         this.lock = new ReentrantLock();
     }
 
