@@ -23,23 +23,22 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0.0
  * @since 1.0.0
  **/
+@SuppressWarnings("java:S3252")
 public class DeleteInventory {
 
     private final Tag<String> deleteFloor = Tag.String("deleteFloor");
-
     private final GlobalInventoryBuilder builder;
-
     private final FloorProvider floorProvider;
 
     public DeleteInventory(@NotNull FloorProvider floorProvider) {
         this.floorProvider = floorProvider;
-        var layout = new InventoryLayout(InventoryType.CHEST_3_ROW);
-        layout.setNonClickItems(LayoutCalculator.quad(0, InventoryType.CHEST_3_ROW.getSize() - 1), Items.DECORATION);
+        this.builder = new GlobalInventoryBuilder(Component.text("Confirm deletion"), InventoryType.CHEST_3_ROW);
+        var layout = new InventoryLayout(this.builder.getType());
+        layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
 
         layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(Component.text("Confirm", NamedTextColor.GREEN)), this::handleClick);
         layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(Component.text("Abort", NamedTextColor.RED)), this::handleClick);
 
-        this.builder = new GlobalInventoryBuilder(Component.text("Confirm deletion"), InventoryType.CHEST_3_ROW);
         this.builder.setLayout(layout);
     }
 
@@ -50,15 +49,12 @@ public class DeleteInventory {
 
         if (item.isAir() || item.material() == Items.DECORATION.material()) return;
 
+
         if (item.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(deleteFloor);
-
-            player.sendMessage(floorAsName);
-
             var floor = floorProvider.getFloor(floorAsName);
 
             if (floor == null) {
-
                 player.closeInventory();
                 player.removeTag(deleteFloor);
                 player.sendMessage("Something is wrong");
