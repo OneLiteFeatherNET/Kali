@@ -26,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0.0
  * @since 1.0.0
  **/
+@SuppressWarnings("java:S3252")
 public class FloorCreateInventory {
 
     private static final Tag<Integer> CLOSE = Tag.Integer("close");
-
     private static final Component INV_TITLE = Component.text("Create floor");
     private static final Component SETUP_TITLE = Component.text("Enter a value");
 
@@ -41,32 +41,26 @@ public class FloorCreateInventory {
             .displayName(Component.text("Change id")).build();
     private static final ItemStack CHANGE_ICON = ItemStack.builder(Material.LECTERN)
             .displayName(Component.text("Change icon")).build();
-
     private static final ItemStack SAVE = ItemStack.builder(Material.GREEN_STAINED_GLASS_PANE)
             .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
-
     private final PersonalInventoryBuilder createInventory;
-
     private final PersonalInventoryBuilder inputGui;
-
     private final Floor floor;
-
     private String name;
-
     private int clickedSlot;
 
-    public FloorCreateInventory(@NotNull Player owningPlayer, @NotNull FloorProvider floorProvider) {
+    public FloorCreateInventory(@NotNull Player owningPlayer) {
         this.floor = new Floor();
         this.createInventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
 
         var layout = new InventoryLayout(this.createInventory.getType());
 
-        layout.setNonClickItems(LayoutCalculator.quad(0, this.createInventory.getType().getSize() - 1), Items.DECORATION);
+        layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
         layout.setItem(10, CHANGE_NAME, this::handleCreateClick);
         layout.setItem(12, CHANGE_EXTERNAL, this::handleCreateClick);
         layout.setItem(14, CHANGE_ID, this::handleCreateClick);
         layout.setItem(16, CHANGE_ICON, this::handleCreateClick);
-        layout.setItem(InventoryType.CHEST_3_ROW.getSize() - 1, SAVE, (player, clickType, slotID, result) -> {
+        layout.setItem(layout.getContents().length - 1, SAVE, (player, clickType, slotID, result) -> {
             player.setTag(CLOSE, 1);
             result.setCancel(true);
             player.closeInventory();
