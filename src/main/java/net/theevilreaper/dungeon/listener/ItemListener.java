@@ -15,12 +15,11 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 1.0.0
  **/
+@SuppressWarnings("java:S3252")
 public class ItemListener implements Consumer<PlayerUseItemEvent> {
 
     private final FloorInventory floorInventory;
-
     private final LocationProvider locationProvider;
-
     private final Instance defaultInstance;
 
     public ItemListener(@NotNull FloorInventory floorInventory,
