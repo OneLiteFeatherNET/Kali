@@ -20,6 +20,7 @@ import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
 import net.theevilreaper.dungeon.items.Items;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Permissions;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -27,26 +28,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+@SuppressWarnings("java:S3252")
 public class FloorInventory {
 
     private static final int START_POS = InventoryType.CHEST_1_ROW.getSize();
     private static final int MAX_ROOM_SLOT = InventoryType.CHEST_5_ROW.getSize();
-
     private final GlobalInventoryBuilder inventoryBuilder;
-
     private final FloorProvider floorProvider;
-
     private final DeleteInventory deleteInventory;
-
     private final Map<ItemStack, RoomSelector> mappedSelectors;
-
     private final EditInstanceManager editInstanceManager;
-
     private final FloorCreateService floorCreateService;
-
     private final LocationProvider locationProvider;
     private final Consumer<EditInstance> consumer;
-
     private final int[] blankSlots;
 
     public FloorInventory(@NotNull EditInstanceManager editInstanceManager,
@@ -107,33 +101,42 @@ public class FloorInventory {
     private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
 
-        switch (clickType) {
-            case RIGHT_CLICK -> {
-                if (player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION)) {
-                    deleteInventory.openInventory(player, PlainTextComponentSerializer.plainText().serialize(result.getClickedItem().getDisplayName()));
-                }
+        var item = result.getClickedItem();
+
+        if (clickType == ClickType.RIGHT_CLICK && player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION) && item.getDisplayName() != null) {
+            deleteInventory.openInventory(player, PlainTextComponentSerializer.plainText().serialize(item.getDisplayName()));
+        }
+
+        if (clickType == ClickType.LEFT_CLICK) {
+            if (item.isAir() || item.material() == Items.DECORATION.material() || !item.hasTag(Floor.NAME_TAG)) return;
+
+            var floor = floorProvider.getFloor(item.getTag(Floor.NAME_TAG));
+
+            if (floor == null) {
+                player.sendMessage("the clicked floor is null");
+                return;
             }
-            case LEFT_CLICK -> {
-                var item = result.getClickedItem();
 
-                if (item.isAir() || item.material() == Items.DECORATION.material() || !item.hasTag(Floor.NAME_TAG)) return;
-
-                var floor = floorProvider.getFloor(item.getTag(Floor.NAME_TAG));
-
-                if (floor == null) {
-                    player.sendMessage("the clicked floor is null");
-                    return;
-                }
-
-                var regionInventory = this.mappedSelectors.computeIfAbsent(result.getClickedItem(),
-                        itemStack -> new RoomSelector(editInstanceManager, locationProvider, floor, this.inventoryBuilder, consumer));
-
-                player.closeInventory();
-                regionInventory.open(player);
-            }
+            var inventory = this.mappedSelectors.computeIfAbsent(item, stack -> getSelector(floor));
+            player.closeInventory();
+            inventory.open(player);
         }
     }
 
+    /**
+     * Creates a new instance from the {@link RoomSelector} class.
+     * @param floor the floor for the new insance
+     * @return the created instance from the {@link RoomSelector}
+     */
+    @Contract("_ -> new")
+    private @NotNull RoomSelector getSelector(@NotNull Floor floor) {
+       return new RoomSelector(editInstanceManager, locationProvider, floor, this.inventoryBuilder, consumer);
+    }
+
+    /**
+     * Opens the inventory for a given player.
+     * @param player the player who should receive the inventory
+     */
     public void open(@NotNull Player player) {
         player.openInventory(this.inventoryBuilder.getInventory());
     }
