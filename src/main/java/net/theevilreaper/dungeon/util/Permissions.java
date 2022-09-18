@@ -15,6 +15,8 @@ public class Permissions {
 
     public static final Permission DELETE_FLOOR_PERMISSION = new Permission("editor.floor.delete");
     public static final Permission CREATE_FLOOR_PERMISSION = new Permission("editor.floor.create");
+    public static final Permission ADMIN_RANK_PERMISSION = new Permission("editor.rank.admin");
+    public static final Permission CONTENT_RANK_PERMISSION = new Permission("editor.rank.content");
 
     private Permissions() {}
 
