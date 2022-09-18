@@ -20,9 +20,7 @@ import java.util.UUID;
  */
 public class EditInstanceManager {
     private static final InstanceManager INSTANCE_MANAGER = MinecraftServer.getInstanceManager();
-
     private final Map<UUID, EditInstance> editInstanceMap;
-
     private final Map<ItemStack, UUID> stackToUUID;
 
     /**
