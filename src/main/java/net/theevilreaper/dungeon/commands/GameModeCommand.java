@@ -94,7 +94,7 @@ public class GameModeCommand extends Command {
      * Sets the gamemode for the executing Player, and
      * notifies them in the chat.
      */
-    private void executeSelf(Player sender, GameMode mode) {
+    private void executeSelf(@NotNull Player sender, @NotNull GameMode mode) {
         sender.setGameMode(mode);
 
         //The translation keys 'gameMode.survival', 'gameMode.creative', etc.
