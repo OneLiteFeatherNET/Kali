@@ -1,7 +1,5 @@
 package net.theevilreaper.dungeon.data.room;
 
-import net.minestom.server.item.ItemStack;
-
 public class AbstractRoom {
 
     private static final int DEFAULT_SCALE = 2;
@@ -11,8 +9,6 @@ public class AbstractRoom {
 
     private int scaleX;
     private int scaleY;
-
-    private transient ItemStack itemStack;
 
     public AbstractRoom(int xPos, int yPos) {
         this.xPos = xPos;
