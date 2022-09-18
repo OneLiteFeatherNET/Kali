@@ -36,76 +36,55 @@ import java.util.function.Consumer;
 public class EditInstance extends InstanceContainer {
 
     public static final Tag<Byte> RESET_TAG = Tag.Byte("reset");
-
     private static final Component RESET_COMPONENT = Messages.PREFIX.append(
             LegacyComponentSerializer.legacySection().deserialize("§cThis instance will be deleted in §65 §cMinutes ")
                     .append(Component.text("[", NamedTextColor.GRAY)
                             .append(Component.text("Reset").color(TextColor.fromHexString("#99ff33"))))
                             .append(Component.text("]", NamedTextColor.GRAY))
                             .clickEvent(ClickEvent.runCommand("/reset")));
-
     private static final Component SELECT_PREFIX = Component.text("[", NamedTextColor.GRAY)
             .append(Component.text("!").color(TextColor.fromHexString("#F8FF12"))).append(Component.text("] ", NamedTextColor.GRAY));
-
-    public static final Component FIRST_POS = SELECT_PREFIX.append(Component.text("First position: ", NamedTextColor.WHITE));
-
-    public static final Component SECOND_POS = SELECT_PREFIX.append(Component.text("Second position: ", NamedTextColor.WHITE));
-
-
+    private static final Component FIRST_POS = SELECT_PREFIX.append(Component.text("First position: ", NamedTextColor.WHITE));
+    private static final Component SECOND_POS = SELECT_PREFIX.append(Component.text("Second position: ", NamedTextColor.WHITE));
     private static final long MAX_TIME = 6_000;
     private static final long START_TIME = 5_000;
     private static final long SECONDS_AS_LONG = 1000;
     private static final int MAXIMUM_ALIVE = 1800;
-
     private final BossBar bossBar;
-
     private Path originPath;
-
     private final GsonFileHandler fileHandler;
-
     private Player owner;
 
     private int currentCounter;
-
     private long nextTick;
-
     private long nextResetMessageTick;
-
     private boolean locked;
-
-    private String joinPermission = "floor.";
-
     private Point firstPos;
-
     private Point secondPos;
-
     private AbstractRoom abstractRoom;
-
-    private final AnvilLoader anvilLoader;
-
+    private AnvilLoader anvilLoader;
     private boolean send;
-
     private final Consumer<EditInstance> containerConsumer;
 
     public EditInstance(@NotNull Consumer<EditInstance> containerConsumer) {
         super(UUID.randomUUID(), KaliDimension.KALI_DIMENSION);
+        //TODO: Add a factory to provide this path
         this.originPath = DungeonEditor.ROOT_PATH.resolve("rooms");
+        //TODO: Provide one single gson file writer to write the or read the room structure
         this.fileHandler = new GsonFileHandler(new Gson());
-        this.bossBar = BossBar.bossBar(Component.text("Loading...", NamedTextColor.RED), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
+        this.bossBar = BossBar.bossBar(Component.empty(), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
         this.currentCounter = MAXIMUM_ALIVE;
-        this.joinPermission += "test"; //this.floor.getExternalName();
         this.nextResetMessageTick = System.currentTimeMillis() + (SECONDS_AS_LONG * 1560);
         this.calculateNextTick();
         this.setTime(START_TIME);
         this.containerConsumer = containerConsumer;
+        //TODO: Rework the anvilloader binding
+        /*
 
         var path = this.originPath.resolve("test_room");
-
-        System.out.println(path.toString());
-
         this.anvilLoader = new AnvilLoader(Path.of(path.toString(), "test_room"));
 
-        setChunkLoader(new AnvilLoader(path));
+        setChunkLoader(new AnvilLoader(path));*/
     }
 
     @Override
@@ -149,6 +128,7 @@ public class EditInstance extends InstanceContainer {
     }
 
     public void setRegionType() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     public boolean createRoom() {
@@ -162,25 +142,24 @@ public class EditInstance extends InstanceContainer {
     }
 
     public void saveRegion() {
-
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public void setOwner(Player owner) {
+    public void setOwner(@NotNull Player owner) {
         this.owner = owner;
     }
 
     public void switchOwner() {
+        Player newOwner = null;
         if (getPlayers().size() - 1 != 0) {
-            Player newOwner = null;
-
-            while(getPlayers().iterator().hasNext() && newOwner == null) {
-                var nextPlayer = getPlayers().iterator().next();
-
-                if (nextPlayer.getUuid().equals(nextPlayer.getUuid())) continue;
+            var iterator = getPlayers().iterator();
+            while(iterator.hasNext() && newOwner == null) {
+                var nextPlayer = iterator.next();
+                if (owner.getUuid().equals(nextPlayer.getUuid())) continue;
                 newOwner = nextPlayer;
             }
-            this.owner = newOwner;
         }
+        this.owner = newOwner;
     }
 
     /**
@@ -244,7 +223,7 @@ public class EditInstance extends InstanceContainer {
      */
     public boolean canJoin(@NotNull Player player) {
         if (!isLocked()) return true;
-        return isLocked() && player.hasPermission(this.joinPermission);
+        return isLocked();
     }
 
     /**
