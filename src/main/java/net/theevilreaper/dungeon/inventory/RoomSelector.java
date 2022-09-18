@@ -26,22 +26,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@SuppressWarnings("java:S3252")
 public class RoomSelector {
 
     public static final Tag<UUID> UUID_TAG = Tag.UUID("id");
-
     private static final int START_SLOT = 9;
-
     private final GlobalInventoryBuilder builder;
-
     private final EditInstanceManager editInstanceManager;
-
     private final Floor floor;
-
     private final Pos defaultPos;
-
     private final Consumer<EditInstance> editInstanceConsumer;
-
     private final InventoryBuilder inventoryBuilder;
 
     public RoomSelector(@NotNull EditInstanceManager editInstanceManager,
@@ -55,12 +49,12 @@ public class RoomSelector {
         this.floor = floor;
         this.inventoryBuilder = floorBuilder;
         this.builder = new GlobalInventoryBuilder("Select the room to edit", InventoryType.CHEST_6_ROW);
-        var layout = new InventoryLayout(InventoryType.CHEST_6_ROW);
+        var layout = new InventoryLayout(this.builder.getType());
 
-        Items.setDecorationLine(layout, InventoryType.CHEST_6_ROW);
+        Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
 
-        layout.setItem(InventoryType.CHEST_6_ROW.getSize() - 1, ItemStack.builder(Material.RED_STAINED_GLASS_PANE).displayName(Component.text("Back", NamedTextColor.RED)).build(), (player, clickType, slotID, condition) ->  {
+        layout.setItem(layout.getContents().length - 1, ItemStack.builder(Material.RED_STAINED_GLASS_PANE).displayName(Component.text("Back", NamedTextColor.RED)).build(), (player, clickType, slotID, condition) ->  {
             condition.setCancel(true);
             player.closeInventory();
             player.openInventory(floorBuilder.getInventory());
@@ -71,7 +65,6 @@ public class RoomSelector {
         layout.setItem(12, ItemStack.builder(Material.GRAY_BANNER).build(), this::handleClick);
 
         this.builder.setCloseFunction(event -> event.setNewInventory(floorBuilder.getInventory()));
-
         this.builder.setLayout(layout);
         this.builder.register();
     }
@@ -86,11 +79,6 @@ public class RoomSelector {
         int counter = START_SLOT;
 
         for (var roomEntry : this.floor.getRooms().entrySet()) {
-
-            if (counter + 1 == InventoryType.CHEST_5_ROW.getSize() + 1) {
-                System.out.println("Floor has more items to add skipping " + (this.floor.getRooms().size() - counter) + " rooms");
-                break;
-            }
             counter++;
         }
 
