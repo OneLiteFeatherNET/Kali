@@ -9,7 +9,16 @@ The build process of a room is not possible with this extension. For that a team
 Some functionality requires permissions to use it.
 The following list shows all current available permissions:
 
+Floor Permissions:
+
 - editor.floor.delete
+- editor.floor.create
+
+Rank Permissions:
+- editor.rank.admin
+- editor.rank.content
+
+The viewer Rank has no permission because the rank is the default rank
 
 ## Database
 
