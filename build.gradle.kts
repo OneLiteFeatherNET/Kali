@@ -1,5 +1,3 @@
-import org.sonarqube.gradle.SonarQubeTask
-
 plugins {
     java
     alias(libs.plugins.sonarqube)
@@ -86,7 +84,7 @@ tasks {
         }
     }
 
-    getByName<SonarQubeTask>("sonarqube") {
+    getByName("sonarqube") {
         dependsOn(rootProject.tasks.test)
     }
 }
@@ -94,6 +92,7 @@ tasks {
 sonarqube {
     properties {
         property("sonar.projectKey", sonarKey)
+        property("sonar.qualitygate.wait", true)
     }
 }
 
