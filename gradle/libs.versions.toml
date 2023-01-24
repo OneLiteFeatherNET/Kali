@@ -2,16 +2,16 @@ metadata.format.version = "1.1"
 
 [versions]
 # Error Tracking
-sentry = "6.0.0"
+sentry = "6.12.1"
 # Plugins
 shadow = "7.1.2"
 # Chat
-adventure = "4.11.0"
+adventure = "4.12.0"
 # Testing
-junit = "5.9.0"
-mockito = "4.7.0"
+junit = "5.9.2"
+mockito = "5.0.0"
 # Quality Check
-sonarqube = "3.4.0.2513"
+sonarqube = "3.5.0.2730"
 # Minestom
 minestom = "master-SNAPSHOT"
 
@@ -27,8 +27,8 @@ sentryJul = { group = "io.sentry", name = "sentry-jul", version.ref = "sentry" }
 # Testing
 junitApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
 junitEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
-mockitoCore = { group =" org.mockito", name = "mockito-core", version.ref = "mockito"}
-mockitoJunit = { group =" org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito"}
+mockitoCore = { group = "org.mockito", name = "mockito-core", version.ref = "mockito"}
+mockitoJunit = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito"}
 
 [bundles]
 
