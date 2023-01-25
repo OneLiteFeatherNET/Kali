@@ -44,11 +44,9 @@ public class DeleteInventory {
 
     private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
-
         var item = result.getClickedItem();
 
-        if (item.isAir() || item.material() == Items.DECORATION.material()) return;
-
+        if (item.isAir()) return;
 
         if (item.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(deleteFloor);

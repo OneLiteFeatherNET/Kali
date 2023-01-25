@@ -55,7 +55,7 @@ public class FloorInventory {
         this.deleteInventory = new DeleteInventory(floorProvider);
         this.consumer = consumer;
         this.mappedSelectors = new HashMap<>();
-        this.inventoryBuilder = new GlobalInventoryBuilder("Floors", InventoryType.CHEST_6_ROW);
+        this.inventoryBuilder = new GlobalInventoryBuilder(Component.text("Floors"), InventoryType.CHEST_6_ROW);
         var layout = new InventoryLayout(InventoryType.CHEST_6_ROW);
 
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
