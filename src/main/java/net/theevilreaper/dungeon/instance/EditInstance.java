@@ -3,6 +3,7 @@ package net.theevilreaper.dungeon.instance;
 import com.google.gson.Gson;
 import de.icevizion.aves.file.GsonFileHandler;
 import de.icevizion.aves.util.Strings;
+import de.icevizion.aves.util.TimeFormat;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -190,7 +191,7 @@ public class EditInstance extends InstanceContainer {
     public void updateTitle() {
         this.bossBar.name(Component
                 .text("Instance will be deleted in ", NamedTextColor.RED).append(
-                        Component.text(Strings.getTimeString(currentCounter), NamedTextColor.YELLOW)));
+                        Component.text(Strings.getTimeString(TimeFormat.MM_SS, currentCounter), NamedTextColor.YELLOW)));
     }
 
     /**
