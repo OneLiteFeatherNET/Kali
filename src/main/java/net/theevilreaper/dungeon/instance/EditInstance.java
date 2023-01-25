@@ -37,6 +37,8 @@ import java.util.function.Consumer;
 public class EditInstance extends InstanceContainer {
 
     public static final Tag<Byte> RESET_TAG = Tag.Byte("reset");
+    private static final Component TIME_TEXT = Component
+            .text("Instance will be deleted in ", NamedTextColor.RED);
     private static final Component RESET_COMPONENT = Messages.PREFIX.append(
             LegacyComponentSerializer.legacySection().deserialize("§cThis instance will be deleted in §65 §cMinutes ")
                     .append(Component.text("[", NamedTextColor.GRAY)
@@ -189,8 +191,7 @@ public class EditInstance extends InstanceContainer {
      * Updates the bossbar title with the current second counter in the format MM:SS.
      */
     public void updateTitle() {
-        this.bossBar.name(Component
-                .text("Instance will be deleted in ", NamedTextColor.RED).append(
+        this.bossBar.name(TIME_TEXT.append(
                         Component.text(Strings.getTimeString(TimeFormat.MM_SS, currentCounter), NamedTextColor.YELLOW)));
     }
 
