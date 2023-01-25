@@ -10,6 +10,7 @@ import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.validate.Check;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,10 +31,12 @@ public class Items {
     public Items() {
         this.regionTool = ItemStack.builder(Material.GOLDEN_AXE)
                 .displayName(Component.text("Regions", NamedTextColor.YELLOW))
-                .meta(itemMetaBuilder
-                        -> itemMetaBuilder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES)).build();
+                .meta(builder -> {
+                    builder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES).set(Tags.ITEM_TAGS, (byte)0);
+                }).build();
         this.floorSelector = ItemStack.builder(Material.CARTOGRAPHY_TABLE)
                 .displayName(Component.text("Floors", NamedTextColor.RED))
+                .meta(builder -> builder.setTag(Tags.ITEM_TAGS, (byte)1))
                 .build();
     }
 
