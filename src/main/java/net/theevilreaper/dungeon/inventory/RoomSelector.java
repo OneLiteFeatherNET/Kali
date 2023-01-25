@@ -48,7 +48,7 @@ public class RoomSelector {
         this.defaultPos = locationProvider.getDefaultPos().add(0, 20, 0);
         this.floor = floor;
         this.inventoryBuilder = floorBuilder;
-        this.builder = new GlobalInventoryBuilder("Select the room to edit", InventoryType.CHEST_6_ROW);
+        this.builder = new GlobalInventoryBuilder(Component.text("Select the room to edit"), InventoryType.CHEST_6_ROW);
         var layout = new InventoryLayout(this.builder.getType());
 
         Items.setDecorationLine(layout, this.builder.getType());
