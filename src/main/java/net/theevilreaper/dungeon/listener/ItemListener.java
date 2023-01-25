@@ -6,6 +6,7 @@ import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.inventory.FloorInventory;
 import net.theevilreaper.dungeon.location.LocationProvider;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -33,11 +34,12 @@ public class ItemListener implements Consumer<PlayerUseItemEvent> {
     public void accept(@NotNull PlayerUseItemEvent event) {
         var item = event.getItemStack();
 
-        if (item.isAir()) return;
-
+        if (item.isAir() || !item.hasTag(Tags.ITEM_TAGS)) return;
         var player = event.getPlayer();
 
-        if (item.material() == Material.CARTOGRAPHY_TABLE && (!(player.getInstance() instanceof EditInstance))) {
+        byte tagValue = item.getTag(Tags.ITEM_TAGS);
+        
+        if (tagValue == 1) {
             this.floorInventory.open(player);
             return;
         }
