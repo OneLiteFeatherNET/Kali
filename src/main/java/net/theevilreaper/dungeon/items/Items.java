@@ -9,6 +9,7 @@ import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,6 +23,7 @@ public class Items {
 
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
             .displayName(Component.empty()).build();
+    private static final byte DEFAULT_HELD_SLOT = (byte)4;
     private final ItemStack regionTool;
     private final ItemStack floorSelector;
 
@@ -51,7 +53,7 @@ public class Items {
     public void setEditItems(@NotNull Player player) {
         player.getInventory().clear();
         player.getInventory().setItemStack(0, this.regionTool);
-        player.setHeldItemSlot((byte)4);
+        player.setHeldItemSlot(DEFAULT_HELD_SLOT);
     }
 
     /**
@@ -68,9 +70,7 @@ public class Items {
      * @param type The given type from the inventory
      */
     public static void setDecorationLine(@NotNull InventoryLayout layout, @NotNull InventoryType type) {
-        if (type.getSize() != layout.getContents().length) {
-            throw new IllegalArgumentException("The given type size is higher then the size from the inventory");
-        }
+        Check.argCondition(type.getSize() != layout.getSize(), "The given type size is higher then the size from the inventory");
         layout.setNonClickItems(LayoutCalculator.fillRow(type), DECORATION);
     }
 }
