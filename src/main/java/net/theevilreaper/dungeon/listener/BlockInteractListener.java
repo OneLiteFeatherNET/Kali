@@ -4,6 +4,7 @@ import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.inventory.RegionInventory;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -29,9 +30,11 @@ public class BlockInteractListener implements Consumer<PlayerBlockInteractEvent>
 
         var item = event.getPlayer().getItemInMainHand();
 
-        if (item.isAir()) return;
+        if (item.isAir() || !item.hasTag(Tags.ITEM_TAGS)) return;
 
-        if (item.material() == Material.GOLDEN_AXE && instance.setSecondPos(event.getBlockPosition())) {
+        byte tagValue = item.getTag(Tags.ITEM_TAGS);
+
+        if (tagValue == 0 && instance.setSecondPos(event.getBlockPosition())) {
             regionInventory.open(event.getPlayer());
         }
     }
