@@ -5,10 +5,10 @@ import de.icevizion.aves.file.FileHandler;
 import de.icevizion.aves.file.GsonFileHandler;
 import de.icevizion.aves.file.gson.PositionGsonAdapter;
 import de.icevizion.aves.map.BaseMap;
-import de.icevizion.aves.util.Players;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class LocationProvider {
     }
 
     public void teleportToSpawn(@NotNull Player player) {
-        Players.hasInstance(player);
+        Check.argCondition(player.getInstance() == null, "The instance can't be null from the player");
 
         if (map == null || map.getSpawn() == null) {
             player.teleport(defaultPos);
