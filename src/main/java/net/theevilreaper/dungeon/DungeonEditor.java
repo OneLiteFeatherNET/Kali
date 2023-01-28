@@ -90,7 +90,7 @@ public class DungeonEditor extends Extension {
 
     private Instance defaultInstance;
 
-    private Consumer<EditInstance> containerConsumer;
+    private final Consumer<EditInstance> containerConsumer;
 
     private FloorCreateService floorCreateService;
 
