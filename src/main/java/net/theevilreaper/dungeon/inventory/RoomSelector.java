@@ -37,6 +37,7 @@ public class RoomSelector {
     private final Pos defaultPos;
     private final Consumer<EditInstance> editInstanceConsumer;
     private final InventoryBuilder inventoryBuilder;
+    private final InventoryBuilder floorBuilder;
 
     public RoomSelector(@NotNull EditInstanceManager editInstanceManager,
                         @NotNull LocationProvider locationProvider,
@@ -45,6 +46,7 @@ public class RoomSelector {
                         @NotNull Consumer<EditInstance> editInstanceConsumer) {
         this.editInstanceManager = editInstanceManager;
         this.editInstanceConsumer = editInstanceConsumer;
+        this.floorBuilder = floorBuilder;
         this.defaultPos = locationProvider.getDefaultPos().add(0, 20, 0);
         this.floor = floor;
         this.inventoryBuilder = floorBuilder;
@@ -54,14 +56,8 @@ public class RoomSelector {
         Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
 
-        layout.setItem(layout.getContents().length - 1, ItemStack.builder(Material.RED_STAINED_GLASS_PANE).displayName(Component.text("Back", NamedTextColor.RED)).build(), (player, clickType, slotID, condition) ->  {
-            condition.setCancel(true);
-            player.closeInventory();
-            player.openInventory(floorBuilder.getInventory());
-            MinecraftServer.getGlobalEventHandler().call(
-                    new InventoryCloseEvent(player.getOpenInventory(), player));
-        });
-
+        var closeItem = ItemStack.builder(Material.RED_STAINED_GLASS_PANE).displayName(Component.text("Back", NamedTextColor.RED)).build();
+        layout.setItem(layout.getContents().length - 1, closeItem, this::handleClose);
         layout.setItem(12, ItemStack.builder(Material.GRAY_BANNER).build(), this::handleClick);
 
         this.builder.setCloseFunction(event -> event.setNewInventory(floorBuilder.getInventory()));
@@ -97,7 +93,7 @@ public class RoomSelector {
 
         var clickedItem = result.getClickedItem();
 
-        if (clickedItem.material() == Material.AIR && "glass".equals(clickedItem.material().name())) return;
+        if (clickedItem.material() == Material.AIR) return;
 
         if (clickedItem.hasTag(UUID_TAG)) {
             var instance = this.editInstanceManager.get(clickedItem.getTag(UUID_TAG));
@@ -125,5 +121,17 @@ public class RoomSelector {
         result.setClickedItem(updatedStack);
         player.closeInventory();
         player.setInstance(editInstance, defaultPos);
+    }
+
+    private void handleClose(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+        result.setCancel(true);
+        this.callCloseEvent(player);
+        player.closeInventory();
+        player.openInventory(floorBuilder.getInventory());
+    }
+
+    private void callCloseEvent(@NotNull Player player) {
+        MinecraftServer.getGlobalEventHandler().call(
+                new InventoryCloseEvent(player.getOpenInventory(), player));
     }
 }
