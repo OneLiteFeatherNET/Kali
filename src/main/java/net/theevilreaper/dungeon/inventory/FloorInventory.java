@@ -56,10 +56,10 @@ public class FloorInventory {
         this.consumer = consumer;
         this.mappedSelectors = new HashMap<>();
         this.inventoryBuilder = new GlobalInventoryBuilder(Component.text("Floors"), InventoryType.CHEST_6_ROW);
-        var layout = new InventoryLayout(InventoryType.CHEST_6_ROW);
+        var layout = new InventoryLayout(this.inventoryBuilder.getType());
 
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
-        Items.setDecorationLine(layout, InventoryType.CHEST_6_ROW);
+        Items.setDecorationLine(layout, this.inventoryBuilder.getType());
 
         this.blankSlots = LayoutCalculator.quad(InventoryType.CHEST_1_ROW.getSize(), InventoryType.CHEST_5_ROW.getSize() - 1);
 
@@ -71,8 +71,6 @@ public class FloorInventory {
             var inventory = this.floorCreateService.getCreateBuilder(player);
             inventory.open();
         });
-
-
         this.inventoryBuilder.setLayout(layout);
         this.inventoryBuilder.register();
         this.updateInventoryLayout();
