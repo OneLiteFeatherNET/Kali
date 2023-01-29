@@ -15,12 +15,12 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TimeUpdatePacket;
-import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.PacketUtils;
 import net.theevilreaper.dungeon.DungeonEditor;
 import net.theevilreaper.dungeon.data.room.AbstractRoom;
 import net.theevilreaper.dungeon.util.KaliDimension;
 import net.theevilreaper.dungeon.util.Messages;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,6 @@ import java.util.function.Consumer;
  **/
 public class EditInstance extends InstanceContainer {
 
-    public static final Tag<Byte> RESET_TAG = Tag.Byte("reset");
     private static final Component TIME_TEXT = Component
             .text("Instance will be deleted in ", NamedTextColor.RED);
     private static final Component RESET_COMPONENT = Messages.PREFIX.append(
@@ -109,7 +108,7 @@ public class EditInstance extends InstanceContainer {
 
         if (timestamp > nextResetMessageTick && !send) {
             owner.sendMessage(RESET_COMPONENT);
-            owner.setTag(RESET_TAG, (byte)1);
+            owner.setTag(Tags.RESET_TAG, (byte)1);
             send = true;
         }
 
