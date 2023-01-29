@@ -6,6 +6,7 @@ import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.condition.Conditions;
 import net.minestom.server.entity.Player;
 import net.theevilreaper.dungeon.instance.EditInstance;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,11 +32,9 @@ public class ResetCommand extends Command {
         var player = (Player) sender;
 
         if (!(player.getInstance() instanceof EditInstance editInstance)) return;
-
-        if (!player.hasTag(EditInstance.RESET_TAG)) return;
-
+        if (!player.hasTag(Tags.RESET_TAG)) return;
 
         editInstance.resetCounter();
-        player.removeTag(EditInstance.RESET_TAG);
+        player.removeTag(Tags.RESET_TAG);
     }
 }
