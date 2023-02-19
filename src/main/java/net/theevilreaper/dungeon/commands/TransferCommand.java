@@ -39,11 +39,9 @@ public class TransferCommand extends Command {
         super("transfer", "tf");
 
         setCondition(Conditions::playerOnly);
-
         setDefaultExecutor((sender, context) -> sender.sendMessage(COMMAND_USAGE));
 
         var targetArgument= new ArgumentString("target");
-
         addSyntax(this::handleCommand, targetArgument);
     }
 
@@ -82,8 +80,5 @@ public class TransferCommand extends Command {
         }
 
         player.sendMessage(Messages.NO_PERMISSION);
-
     }
 }
-
-
