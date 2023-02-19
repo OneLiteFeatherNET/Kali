@@ -22,7 +22,7 @@ morphia = "2.2.8"
 canis = "master-SNAPSHOT"
 
 # Aves
-aves = "1.2.0-SNAPSHOT"
+aves = "1.2.0+e27b7048"
 
 [libraries]
 
