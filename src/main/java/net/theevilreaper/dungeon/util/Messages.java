@@ -48,5 +48,14 @@ public class Messages {
                     NamedTextColor.RED
             ));
 
+    public static final Component CANT_TRANSFER_YOURSELF =
+            PREFIX.append(Component.text("You already own the instance", NamedTextColor.RED));
+
+    public static final Component NOT_SAME_EDITOR_INSTANCE =
+            Messages.PREFIX.append(Component.text(
+                    "Can't set the owner because the target is not on the same instance!",
+                    NamedTextColor.RED
+            ));
+
     private Messages() {}
 }
