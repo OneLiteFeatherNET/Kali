@@ -1,7 +1,5 @@
 package net.theevilreaper.dungeon.instance;
 
-import com.google.gson.Gson;
-import de.icevizion.aves.file.GsonFileHandler;
 import de.icevizion.aves.util.Strings;
 import de.icevizion.aves.util.TimeFormat;
 import net.kyori.adventure.bossbar.BossBar;
@@ -54,9 +52,7 @@ public class EditInstance extends InstanceContainer {
     private static final int MAXIMUM_ALIVE = 1800;
     private final BossBar bossBar;
     private Path originPath;
-    private final GsonFileHandler fileHandler;
     private Player owner;
-
     private int currentCounter;
     private long nextTick;
     private long nextResetMessageTick;
@@ -73,7 +69,6 @@ public class EditInstance extends InstanceContainer {
         //TODO: Add a factory to provide this path
         this.originPath = DungeonEditor.ROOT_PATH.resolve("rooms");
         //TODO: Provide one single gson file writer to write the or read the room structure
-        this.fileHandler = new GsonFileHandler(new Gson());
         this.bossBar = BossBar.bossBar(Component.empty(), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
         this.currentCounter = MAXIMUM_ALIVE;
         this.nextResetMessageTick = System.currentTimeMillis() + (SECONDS_AS_LONG * 1560);
