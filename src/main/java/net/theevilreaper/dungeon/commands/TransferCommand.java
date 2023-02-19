@@ -13,72 +13,64 @@ import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
-import static net.theevilreaper.dungeon.util.Messages.NO_INSTANCE_OWNER;
-import static net.theevilreaper.dungeon.util.Messages.PLAYER_NOT_FOUND;
+import static net.theevilreaper.dungeon.util.Messages.*;
 
 /**
- * The command allows to transfer to ownership of an instance to another player.
+ * The command allows the current owner of an {@link EditInstance} to give someone else the ownership of the instance.
  * @author theEvilReaper
  * @since 1.0.0
  * @version 1.0.0
  */
 public class TransferCommand extends Command {
 
-    private static final Component NOT_SAME_EDITOR_INSTANCE =
-            Messages.PREFIX.append(Component.text(
-                    "Can't set the owner because the target is not on the same instance!",
-                    NamedTextColor.RED
-            ));
-
     private static final Component COMMAND_USAGE =
             Messages.PREFIX.append(Component.text("Please use", NamedTextColor.GRAY))
                     .append(Component.text("/transfer <name>", NamedTextColor.YELLOW));
 
+    private final ArgumentString targetArgument;
 
     public TransferCommand() {
         super("transfer", "tf");
-
+        this.targetArgument = new ArgumentString("target");
         setCondition(Conditions::playerOnly);
         setDefaultExecutor((sender, context) -> sender.sendMessage(COMMAND_USAGE));
-
-        var targetArgument= new ArgumentString("target");
         addSyntax(this::handleCommand, targetArgument);
     }
 
+    /**
+     * Handles the logic to change the ownership of an {@link EditInstance}.
+     * @param sender the involved {@link CommandSender}
+     * @param context the given {@link CommandContext} from the command
+     */
     private void handleCommand(@NotNull CommandSender sender, @NotNull CommandContext context) {
         var player = (Player) sender;
 
-        String target = context.get("target");
+        if (!(player.getInstance() instanceof EditInstance editInstance)) return;
 
-        if (player.getInstance() instanceof EditInstance editInstance) {
-            if (editInstance.getOwner() != null && !editInstance.hasSameUUID(player.getUuid())) {
-                player.sendMessage(NO_INSTANCE_OWNER);
-                return;
-            }
-
-            var newOwner = MinecraftServer.getConnectionManager().findPlayer(target);
-
-            if (newOwner == null) {
-                player.sendMessage(PLAYER_NOT_FOUND);
-                return;
-            }
-
-            if (newOwner.getInstance() != null && !newOwner.getInstance().getUniqueId().equals(editInstance.getUniqueId())) {
-                player.sendMessage(NOT_SAME_EDITOR_INSTANCE);
-                return;
-            }
-
-            if (editInstance.hasSameUUID(newOwner.getUuid())) {
-                player.sendMessage("Same player");
-                return;
-            }
-
-            editInstance.setOwner(newOwner);
-            newOwner.sendMessage(NO_INSTANCE_OWNER);
-
+        if (!editInstance.isOwner(player.getUuid())) {
+            player.sendMessage(NO_INSTANCE_OWNER);
             return;
         }
 
-        player.sendMessage(Messages.NO_PERMISSION);
+        String target = context.get(targetArgument);
+        var newOwner = MinecraftServer.getConnectionManager().findPlayer(target);
+
+        if (newOwner == null) {
+            player.sendMessage(PLAYER_NOT_FOUND);
+            return;
+        }
+
+        if (newOwner.getUuid().equals(player.getUuid())) {
+            player.sendMessage(CANT_TRANSFER_YOURSELF);
+            return;
+        }
+
+        if (!newOwner.getInstance().getUniqueId().equals(editInstance.getUniqueId())) {
+            player.sendMessage(NOT_SAME_EDITOR_INSTANCE);
+            return;
+        }
+
+        editInstance.setOwner(newOwner);
+        newOwner.sendMessage(NO_INSTANCE_OWNER);
     }
 }
