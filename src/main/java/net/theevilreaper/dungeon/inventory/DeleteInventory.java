@@ -15,7 +15,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.FloorProvider;
 import net.theevilreaper.dungeon.event.FloorRemoveEvent;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.NotNull;
 
 /**

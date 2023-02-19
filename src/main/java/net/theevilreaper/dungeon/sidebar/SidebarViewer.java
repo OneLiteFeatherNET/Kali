@@ -10,6 +10,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.TeamManager;
 import net.theevilreaper.dungeon.DungeonEditor;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class SidebarViewer {
         }
 
         TEAM_MANAGER.getTeam(rank.getName()).addMember(player.getUsername());
-        player.setTag(DungeonEditor.NAME_TAG, id);
+        player.setTag(Tags.NAME_TAG, id);
 
         var tag = rank.getPrefix().color(rank.getTextColor()).append(RANK_SPACE).append(player.getName().color(TextColor.fromHexString("#FFFAFA")));
         player.setDisplayName(tag);
@@ -88,6 +89,6 @@ public class SidebarViewer {
     }
 
     public void remove(@NotNull Player player) {
-        player.removeTag(DungeonEditor.NAME_TAG);
+        player.removeTag(Tags.NAME_TAG);
     }
 }

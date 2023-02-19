@@ -3,7 +3,7 @@ package net.theevilreaper.dungeon.listener;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
 import org.jetbrains.annotations.NotNull;
