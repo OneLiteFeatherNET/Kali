@@ -17,7 +17,7 @@ import net.theevilreaper.dungeon.data.floor.FloorProvider;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Permissions;
 import org.jetbrains.annotations.Contract;
@@ -25,14 +25,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
 import java.util.function.Consumer;
 
 @SuppressWarnings("java:S3252")
 public class FloorInventory {
 
-    private static final int START_POS = InventoryType.CHEST_1_ROW.getSize();
-    private static final int MAX_ROOM_SLOT = InventoryType.CHEST_5_ROW.getSize();
     private final GlobalInventoryBuilder inventoryBuilder;
     private final FloorProvider floorProvider;
     private final DeleteInventory deleteInventory;
@@ -63,39 +61,55 @@ public class FloorInventory {
 
         this.blankSlots = LayoutCalculator.quad(InventoryType.CHEST_1_ROW.getSize(), InventoryType.CHEST_5_ROW.getSize() - 1);
 
-        layout.setItem(49, ItemStack.builder(Material.DARK_OAK_SIGN)
-                .displayName(Component.text("Create floor", NamedTextColor.GREEN)).build(), (player, clickType, slot, condition) -> {
-            condition.setCancel(true);
-            if (!player.hasPermission(Permissions.CREATE_FLOOR_PERMISSION)) return;
-            player.closeInventory();
-            var inventory = this.floorCreateService.getCreateBuilder(player);
-            inventory.open();
+        layout.setItem(49, ItemStack.builder(Material.DARK_OAK_SIGN).displayName(Component.text("Create floor", NamedTextColor.GREEN)).build(), this::handleCreateClick);
+
+        this.inventoryBuilder.setDataLayoutFunction(inventoryLayout -> {
+            inventoryLayout.blank(blankSlots);
+            var floors = floorProvider.getFloors();
+            var iterator = floors.iterator();
+            int counter = 0;
+            while(iterator.hasNext() && counter < this.blankSlots.length) {
+                var floor = iterator.next();
+                inventoryLayout.setItem(this.blankSlots[counter], floor.getItemStack(), this::handleClick);
+                counter++;
+            }
+            return inventoryLayout;
         });
+
         this.inventoryBuilder.setLayout(layout);
         this.inventoryBuilder.register();
         this.updateInventoryLayout();
     }
 
+    /**
+     * Invalidates the data layout to indicates that the layout should be updated.
+     */
     public void updateInventoryLayout() {
-        InventoryLayout inventoryLayout = this.inventoryBuilder.getLayout();
-        Set<Floor> floors = floorProvider.getFloors();
-
-        if (inventoryLayout == null || floors.isEmpty()) return;
-
-        inventoryLayout.blank(blankSlots);
-
-        int posCount = START_POS;
-        var iterator = floors.iterator();
-
-        while (iterator.hasNext() && posCount < MAX_ROOM_SLOT) {
-            var floor = iterator.next();
-            inventoryLayout.setItem(posCount, floor.getItemStack(), this::handleClick);
-            posCount++;
-        }
-
-        this.inventoryBuilder.invalidateLayout();
+        this.inventoryBuilder.invalidateDataLayout();
     }
 
+    /**
+     * Handles the click for the item which allows the creation of new floors.
+     * @param player the player who clicked on the item
+     * @param clickType the given {@link ClickType}
+     * @param slotID the slot id
+     * @param result the {@link InventoryConditionResult} from the click
+     */
+    private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+        result.setCancel(true);
+        if (!player.hasPermission(Permissions.CREATE_FLOOR_PERMISSION)) return;
+        player.closeInventory();
+        var inventory = this.floorCreateService.getCreateBuilder(player);
+        inventory.open();
+    }
+
+    /**
+     * Handles the click logic for a floor item in the inventory.
+     * @param player the player who clicked on the item
+     * @param clickType the given {@link ClickType}
+     * @param slotID the slot id
+     * @param result the {@link InventoryConditionResult} from the click
+     */
     private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
 

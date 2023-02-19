@@ -24,7 +24,8 @@ public class ItemListener implements Consumer<PlayerUseItemEvent> {
     private final Instance defaultInstance;
 
     public ItemListener(@NotNull FloorInventory floorInventory,
-                        @NotNull LocationProvider locationProvider, @NotNull Instance defaultInstance) {
+                        @NotNull LocationProvider locationProvider,
+                        @NotNull Instance defaultInstance) {
         this.floorInventory = floorInventory;
         this.locationProvider = locationProvider;
         this.defaultInstance = defaultInstance;

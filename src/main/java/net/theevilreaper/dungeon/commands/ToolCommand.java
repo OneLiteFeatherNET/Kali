@@ -6,7 +6,7 @@ import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.condition.Conditions;
 import net.minestom.server.entity.Player;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.NotNull;
 
 import static net.theevilreaper.dungeon.util.Messages.NO_EDIT_INSTANCE;

@@ -13,7 +13,7 @@ import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

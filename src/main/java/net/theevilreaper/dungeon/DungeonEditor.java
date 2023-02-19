@@ -26,7 +26,6 @@ import net.minestom.server.extensions.Extension;
 import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.BlockManager;
-import net.minestom.server.tag.Tag;
 import net.theevilreaper.canis.BannerHandler;
 import net.theevilreaper.canis.BeaconHandler;
 import net.theevilreaper.canis.SignHandler;
@@ -46,7 +45,7 @@ import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.inventory.FloorInventory;
 import net.theevilreaper.dungeon.inventory.RegionInventory;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
@@ -69,14 +68,9 @@ public class DungeonEditor extends Extension {
 
     private static final String DATABASE_FILE = "database.json";
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
     public static final Gson GSON = new GsonBuilder().create();
     private static final Logger LOGGER = LoggerFactory.getLogger(DungeonEditor.class);
-
-    public static final Tag<Integer> NAME_TAG = Tag.Integer("displayTag");
-
     public static final Path ROOT_PATH = Paths.get("");
-
     private FloorProvider floorProvider;
     private FloorInventory floorInventory;
     private final EditInstanceManager editInstanceManager;

@@ -14,22 +14,20 @@ import net.minestom.server.inventory.click.ClickType;
 import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
-import net.theevilreaper.dungeon.items.Items;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Messages;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @SuppressWarnings("java:S3252")
 public class RoomSelector {
 
-    public static final Tag<UUID> UUID_TAG = Tag.UUID("id");
     private static final int START_SLOT = 9;
     private final GlobalInventoryBuilder builder;
     private final EditInstanceManager editInstanceManager;
@@ -95,8 +93,8 @@ public class RoomSelector {
 
         if (clickedItem.material() == Material.AIR) return;
 
-        if (clickedItem.hasTag(UUID_TAG)) {
-            var instance = this.editInstanceManager.get(clickedItem.getTag(UUID_TAG));
+        if (clickedItem.hasTag(Tags.UUID_TAG)) {
+            var instance = this.editInstanceManager.get(clickedItem.getTag(Tags.UUID_TAG));
 
             if (instance == null) return;
 
@@ -114,7 +112,7 @@ public class RoomSelector {
 
         MinecraftServer.getInstanceManager().registerInstance(editInstance);
 
-        var updatedStack = result.getClickedItem().withTag(UUID_TAG, editInstance.getUniqueId());
+        var updatedStack = result.getClickedItem().withTag(Tags.UUID_TAG, editInstance.getUniqueId());
 
         this.editInstanceManager.add(editInstance, updatedStack);
 
