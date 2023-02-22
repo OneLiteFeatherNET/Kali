@@ -42,6 +42,9 @@ public class Messages {
     public static final Component NO_PLAYER =
             PREFIX.append(Component.text("The command works only for players", NamedTextColor.RED));
 
+    public static final Component ERROR_FLOOR_DELETE =
+            PREFIX.append(Component.text("It seems that the floor doesn't exists anymore", NamedTextColor.RED));
+
     public static final Component NO_INSTANCE_OWNER =
             PREFIX.append(Component.text(
                     "You can not execute this command because you are not the owner of this instance!",
