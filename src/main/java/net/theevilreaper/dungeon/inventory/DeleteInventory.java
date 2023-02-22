@@ -16,6 +16,8 @@ import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.FloorProvider;
 import net.theevilreaper.dungeon.event.FloorRemoveEvent;
 import net.theevilreaper.dungeon.util.Items;
+import net.theevilreaper.dungeon.util.Messages;
+import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,18 +28,20 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("java:S3252")
 public class DeleteInventory {
 
-    private final Tag<String> deleteFloor = Tag.String("deleteFloor");
+    private static final Component DELETE_TITLE = Component.text("Confirm deletion");
+    private static final Component CONFIRM_COMPONENT = Component.text("Confirm", NamedTextColor.GREEN);
+    private static final Component ABORT_COMPONENT = Component.text("Abort", NamedTextColor.RED);
     private final GlobalInventoryBuilder builder;
     private final FloorProvider floorProvider;
 
     public DeleteInventory(@NotNull FloorProvider floorProvider) {
         this.floorProvider = floorProvider;
-        this.builder = new GlobalInventoryBuilder(Component.text("Confirm deletion"), InventoryType.CHEST_3_ROW);
+        this.builder = new GlobalInventoryBuilder(DELETE_TITLE, InventoryType.CHEST_3_ROW);
         var layout = new InventoryLayout(this.builder.getType());
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
 
-        layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(Component.text("Confirm", NamedTextColor.GREEN)), this::handleClick);
-        layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(Component.text("Abort", NamedTextColor.RED)), this::handleClick);
+        layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(CONFIRM_COMPONENT), this::handleClick);
+        layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(ABORT_COMPONENT), this::handleClick);
 
         this.builder.setLayout(layout);
     }
@@ -49,13 +53,13 @@ public class DeleteInventory {
         if (item.isAir()) return;
 
         if (item.material() == Material.LIME_DYE) {
-            var floorAsName = player.getTag(deleteFloor);
+            var floorAsName = player.getTag(Tags.DELETE_FLOOR);
             var floor = floorProvider.getFloor(floorAsName);
 
             if (floor == null) {
                 player.closeInventory();
-                player.removeTag(deleteFloor);
-                player.sendMessage("Something is wrong");
+                player.removeTag(Tags.DELETE_FLOOR);
+                player.sendMessage(Messages.ERROR_FLOOR_DELETE);
                 return;
             }
 
@@ -63,11 +67,11 @@ public class DeleteInventory {
         }
 
         player.closeInventory();
-        player.removeTag(deleteFloor);
+        player.removeTag(Tags.DELETE_FLOOR);
     }
 
     public void openInventory(@NotNull Player player, @NotNull String floor) {
-        player.setTag(deleteFloor, floor);
+        player.setTag(Tags.DELETE_FLOOR, floor);
         player.openInventory(builder.getInventory());
     }
 }
