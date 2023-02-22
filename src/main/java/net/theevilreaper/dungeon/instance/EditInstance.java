@@ -222,6 +222,10 @@ public class EditInstance extends InstanceContainer {
         return isLocked();
     }
 
+    public boolean isOwner(@NotNull UUID uuid) {
+        return owner != null && hasSameUUID(uuid);
+    }
+
     /**
      * Checks if a given uuid is equal to the uuid of the owning player.
      * @param uuid The uuid to check
