@@ -2,6 +2,8 @@ package net.theevilreaper.dungeon.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.ArrayList;
@@ -64,12 +66,21 @@ public class Messages {
             ));
 
     public static final List<Component> FILTER_LORE = new ArrayList<>();
+    public static final List<Component> FLOOR_LORE = new ArrayList<>();
 
     static {
         FILTER_LORE.add(Component.empty());
         FILTER_LORE.add(Component.text("Click left to apply a filter"));
         FILTER_LORE.add(Component.empty());
         FILTER_LORE.add(Component.text("To remove the current filter please make a right click on the item"));
+
+        FLOOR_LORE.add(Component.empty());
+        FLOOR_LORE.add(Component.text("LeftClick: ", NamedTextColor.GRAY)
+                .append(Component.text("Edit").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.GREEN))));
+        FLOOR_LORE.add(Component.empty());
+        FLOOR_LORE.add(Component.text("RightClick: ", NamedTextColor.GRAY)
+                        .append(Component.text("Delete").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.RED))));
+        FLOOR_LORE.add(Component.empty());
     }
 
     private Messages() {}
