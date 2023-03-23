@@ -9,8 +9,6 @@ import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemHideFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.utils.validate.Check;
-import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("java:S3252")
 public class Items {
 
+    public static final byte REGION_ITEM = 0;
+    public static final byte FLOOR_ITEM = 1;
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
             .displayName(Component.empty()).build();
     private static final byte DEFAULT_HELD_SLOT = (byte)4;
@@ -31,10 +31,10 @@ public class Items {
     public Items() {
         this.regionTool = ItemStack.builder(Material.GOLDEN_AXE)
                 .displayName(Component.text("Regions", NamedTextColor.YELLOW))
-                .meta(builder -> builder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES).set(Tags.ITEM_TAGS, (byte)0)).build();
+                .meta(builder -> builder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES).set(Tags.ITEM_TAGS, REGION_ITEM)).build();
         this.floorSelector = ItemStack.builder(Material.CARTOGRAPHY_TABLE)
                 .displayName(Component.text("Floors", NamedTextColor.RED))
-                .meta(builder -> builder.setTag(Tags.ITEM_TAGS, (byte)1))
+                .meta(builder -> builder.setTag(Tags.ITEM_TAGS, FLOOR_ITEM))
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class Items {
      * @param type The given type from the inventory
      */
     public static void setDecorationLine(@NotNull InventoryLayout layout, @NotNull InventoryType type) {
-        Check.argCondition(type.getSize() != layout.getSize(), "The given type size is higher then the size from the inventory");
+        //Check.argCondition(type.getSize() != layout.getSize(), "The given type size is higher then the size from the inventory");
         layout.setNonClickItems(LayoutCalculator.fillRow(type), DECORATION);
     }
 }
