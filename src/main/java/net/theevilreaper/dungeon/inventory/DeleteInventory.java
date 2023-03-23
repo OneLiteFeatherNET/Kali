@@ -12,8 +12,7 @@ import net.minestom.server.inventory.click.ClickType;
 import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.tag.Tag;
-import net.theevilreaper.dungeon.data.floor.FloorProvider;
+import net.theevilreaper.dungeon.data.floor.FloorGetMethod;
 import net.theevilreaper.dungeon.event.FloorRemoveEvent;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Messages;
@@ -21,6 +20,9 @@ import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * The inventory is used to ask the player if he really wants to delete the floor or not.
+ * If there is a confirmation to delete the floor. So this is deleted from the inventory and in the database.
+ * The region files themselves will not be deleted. If the deletion is denied nothing further happens
  * @author theEvilReaper
  * @version 1.0.0
  * @since 1.0.0
@@ -32,20 +34,44 @@ public class DeleteInventory {
     private static final Component CONFIRM_COMPONENT = Component.text("Confirm", NamedTextColor.GREEN);
     private static final Component ABORT_COMPONENT = Component.text("Abort", NamedTextColor.RED);
     private final GlobalInventoryBuilder builder;
-    private final FloorProvider floorProvider;
+    private final FloorGetMethod floorGetMethod;
 
-    public DeleteInventory(@NotNull FloorProvider floorProvider) {
-        this.floorProvider = floorProvider;
+    /**
+     * Creates a new instance from the delete inventory.
+     * @param floorGetMethod the method reference to get a floor by its name
+     */
+    public DeleteInventory(@NotNull FloorGetMethod floorGetMethod) {
+        this.floorGetMethod = floorGetMethod;
         this.builder = new GlobalInventoryBuilder(DELETE_TITLE, InventoryType.CHEST_3_ROW);
         var layout = new InventoryLayout(this.builder.getType());
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
 
         layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(CONFIRM_COMPONENT), this::handleClick);
-        layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(ABORT_COMPONENT), this::handleClick);
+        layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(ABORT_COMPONENT), this::handleAbortClick);
 
         this.builder.setLayout(layout);
     }
 
+    /**
+     * Handles what happened when a player abort the deletion of a floor.
+     * @param player the player who is involved
+     * @param clickType the clickType as {@link ClickType} reference
+     * @param slotID the involved slot
+     * @param result the result
+     */
+    private void handleAbortClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+        result.setCancel(true);
+        player.closeInventory();
+        player.removeTag(Tags.DELETE_FLOOR);
+    }
+
+    /**
+     * Handles the click logic to delete a floor.
+     * @param player the player who is involved
+     * @param clickType the clickType as {@link ClickType} reference
+     * @param slotID the involved slot
+     * @param result the result
+     */
     private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         var item = result.getClickedItem();
@@ -54,7 +80,7 @@ public class DeleteInventory {
 
         if (item.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(Tags.DELETE_FLOOR);
-            var floor = floorProvider.getFloor(floorAsName);
+            var floor = floorGetMethod.getFloor(floorAsName);
 
             if (floor == null) {
                 player.closeInventory();
@@ -70,6 +96,11 @@ public class DeleteInventory {
         player.removeTag(Tags.DELETE_FLOOR);
     }
 
+    /**
+     * Opens the inventory to delete the given floor.
+     * @param player the player who should get the inventory
+     * @param floor the floor which is involved
+     */
     public void openInventory(@NotNull Player player, @NotNull String floor) {
         player.setTag(Tags.DELETE_FLOOR, floor);
         player.openInventory(builder.getInventory());
