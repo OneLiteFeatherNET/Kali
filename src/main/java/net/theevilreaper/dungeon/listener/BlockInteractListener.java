@@ -1,9 +1,9 @@
 package net.theevilreaper.dungeon.listener;
 
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
-import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.inventory.RegionInventory;
+import net.theevilreaper.dungeon.inventory.region.RegionInventory;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public class BlockInteractListener implements Consumer<PlayerBlockInteractEvent>
 
         byte tagValue = item.getTag(Tags.ITEM_TAGS);
 
-        if (tagValue == 0 && instance.setSecondPos(event.getBlockPosition())) {
+        if (tagValue == Items.REGION_ITEM && instance.setSecondPos(event.getBlockPosition())) {
             regionInventory.open(event.getPlayer());
         }
     }

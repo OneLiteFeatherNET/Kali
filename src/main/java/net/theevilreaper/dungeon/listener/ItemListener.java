@@ -4,8 +4,9 @@ import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.inventory.FloorInventory;
+import net.theevilreaper.dungeon.inventory.floor.FloorInventory;
 import net.theevilreaper.dungeon.location.LocationProvider;
+import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,8 +40,7 @@ public class ItemListener implements Consumer<PlayerUseItemEvent> {
         var player = event.getPlayer();
 
         byte tagValue = item.getTag(Tags.ITEM_TAGS);
-        
-        if (tagValue == 1) {
+        if (tagValue == Items.FLOOR_ITEM) {
             this.floorInventory.open(player);
             return;
         }
