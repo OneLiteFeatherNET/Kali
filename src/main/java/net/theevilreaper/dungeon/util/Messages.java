@@ -4,6 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Messages {
 
     public static final Component PREFIX =
@@ -59,6 +62,15 @@ public class Messages {
                     "Can't set the owner because the target is not on the same instance!",
                     NamedTextColor.RED
             ));
+
+    public static final List<Component> FILTER_LORE = new ArrayList<>();
+
+    static {
+        FILTER_LORE.add(Component.empty());
+        FILTER_LORE.add(Component.text("Click left to apply a filter"));
+        FILTER_LORE.add(Component.empty());
+        FILTER_LORE.add(Component.text("To remove the current filter please make a right click on the item"));
+    }
 
     private Messages() {}
 }
