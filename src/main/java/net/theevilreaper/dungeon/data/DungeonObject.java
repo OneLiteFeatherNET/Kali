@@ -22,6 +22,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @SuppressWarnings("java:S3252")
+@Deprecated(forRemoval = true)
 public class DungeonObject implements Serializable {
 
     @Id
