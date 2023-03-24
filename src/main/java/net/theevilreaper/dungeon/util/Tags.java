@@ -10,7 +10,7 @@ public final class Tags {
     public static final Tag<Integer> NAME_TAG = Tag.Integer("displayTag");
     public static final Tag<UUID> UUID_TAG = Tag.UUID("id");
     public static final Tag<Byte> RESET_TAG = Tag.Byte("reset");
-    public static final Tag<String> DELETE_FLOOR = Tag.String("deleteFloor");
+    public static final Tag<UUID> FLOOR_ID = Tag.UUID("floorID");
     public static final Tag<String> FLOOR_TAG = Tag.String("name");
 
     private Tags() {}
