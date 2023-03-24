@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +47,7 @@ public class FloorDatabaseHandler implements DatabaseEntity<Floor> {
 
     @Override
     public List<Floor> getAllEntries() {
-        return this.mongoDatabase.getDatastore().find(Floor.class).stream().toList();
+        var result = this.mongoDatabase.getDatastore().find(FloorDTO.class).stream().toList();
+        return new ArrayList<>(result);
     }
 }
