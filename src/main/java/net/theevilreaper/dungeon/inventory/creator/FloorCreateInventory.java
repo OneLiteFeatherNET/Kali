@@ -16,6 +16,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.Floor;
+import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,6 @@ public class FloorCreateInventory {
     private static final Tag<Integer> CLOSE = Tag.Integer("close");
     private static final Component INV_TITLE = Component.text("Create floor");
     private static final Component SETUP_TITLE = Component.text("Enter a value");
-
     private static final ItemStack CHANGE_NAME = ItemStack.builder(Material.OAK_SIGN)
             .displayName(Component.text("Change name")).build();
     private static final ItemStack CHANGE_EXTERNAL = ItemStack.builder(Material.CRIMSON_SIGN)
@@ -42,17 +42,18 @@ public class FloorCreateInventory {
             .displayName(Component.text("Change icon")).build();
     private static final ItemStack SAVE = ItemStack.builder(Material.GREEN_STAINED_GLASS_PANE)
             .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
-    private final PersonalInventoryBuilder createInventory;
+    private final PersonalInventoryBuilder inventory;
     private final PersonalInventoryBuilder inputGui;
-    private final Floor floor;
     private String name;
     private int clickedSlot;
 
-    public FloorCreateInventory(@NotNull Player owningPlayer) {
-        this.floor = new Floor();
-        this.createInventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
+    private FloorDTO.Builder builder;
 
-        var layout = new InventoryLayout(this.createInventory.getType());
+    public FloorCreateInventory(@NotNull Player owningPlayer) {
+        this.builder = Floor.builder();
+        this.inventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
+
+        var layout = new InventoryLayout(this.inventory.getType());
 
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
         layout.setItem(10, CHANGE_NAME, this::handleCreateClick);
@@ -63,20 +64,20 @@ public class FloorCreateInventory {
             player.setTag(CLOSE, 1);
             result.setCancel(true);
             player.closeInventory();
-            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.createInventory.getInventory(), player));
+            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player));
         });
 
-        this.createInventory.setLayout(layout);
-        this.createInventory.setCloseFunction(event -> {
+        this.inventory.setLayout(layout);
+        this.inventory.setCloseFunction(event -> {
             var player = event.getPlayer();
 
             if (player.hasTag(CLOSE)) {
                 player.removeTag(CLOSE);
-                EventDispatcher.call(new FloorCreateEvent(player, floor));
+                EventDispatcher.call(new FloorCreateEvent(player, this.builder.build()));
             }
         });
 
-        this.createInventory.register();
+        this.inventory.register();
 
         this.inputGui = new PersonalInventoryBuilder(SETUP_TITLE, InventoryType.ANVIL, owningPlayer);
         var createLayout = new InventoryLayout(this.inputGui.getType());
@@ -89,12 +90,22 @@ public class FloorCreateInventory {
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {
             switch (this.clickedSlot) {
-                case 10 -> this.floor.setName(name);
-                case 12 -> this.floor.setExternalName(name);
+                case 10 -> {
+                    this.builder.setName(name);
+                    var slot = layout.getSlot(10);
+                    layout.update(10, update(slot.getItem(), name), slot.getClick());
+                }
+                case 12 -> {
+                    this.builder.setExternalName(name);
+                    var slot = layout.getSlot(12);
+                    layout.update(12, update(slot.getItem(), name), slot.getClick());
+                }
                 case 14 -> {
                     try {
                         var id = Integer.parseInt(name);
-                        this.floor.setFloorID(id);
+                        this.builder.setId(id);
+                        var slot = layout.getSlot(14);
+                        layout.update(14, update(slot.getItem(), name), slot.getClick());
                     } catch (NumberFormatException exception) {
                         owningPlayer.sendMessage("NO NUMBER");
                     }
@@ -104,12 +115,21 @@ public class FloorCreateInventory {
 
                     if (material == null) material = Material.STONE;
 
-                    this.floor.setMaterial(material);
+                    this.builder.setMaterial(material);
+                    var slot = layout.getSlot(16);
+                    layout.update(16, update(slot.getItem(), name), slot.getClick());
                 }
             }
-            createInventory.open();
+            inventory.invalidateLayout();
+            inventory.open();
         });
         this.inputGui.register();
+    }
+
+    private @NotNull ItemStack update(@NotNull ItemStack itemStack, @NotNull String input) {
+        var newItem = ItemStack.builder(itemStack.material()).displayName(itemStack.getDisplayName());
+        newItem.lore(Component.empty(), Component.text("Value: " + input));
+        return newItem.build();
     }
 
     private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
@@ -120,7 +140,7 @@ public class FloorCreateInventory {
     }
 
     public void unregister() {
-        this.createInventory.unregister();
+        this.inventory.unregister();
         this.inputGui.unregister();
     }
 
@@ -129,6 +149,6 @@ public class FloorCreateInventory {
     }
 
     public void open() {
-        this.createInventory.open();
+        this.inventory.open();
     }
 }
