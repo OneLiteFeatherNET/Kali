@@ -5,8 +5,11 @@ import de.icevizion.aves.inventory.InventoryLayout;
 import de.icevizion.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
+import net.minestom.server.event.inventory.InventoryCloseEvent;
+import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
 import net.minestom.server.inventory.condition.InventoryConditionResult;
@@ -18,6 +21,8 @@ import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * The inventory is used to ask the player if he really wants to delete the floor or not.
@@ -40,7 +45,7 @@ public class DeleteInventory {
      * Creates a new instance from the delete inventory.
      * @param floorGetMethod the method reference to get a floor by its name
      */
-    public DeleteInventory(@NotNull FloorGetMethod floorGetMethod) {
+    public DeleteInventory(@NotNull FloorGetMethod floorGetMethod, @NotNull Inventory reOpenInventory) {
         this.floorGetMethod = floorGetMethod;
         this.builder = new GlobalInventoryBuilder(DELETE_TITLE, InventoryType.CHEST_3_ROW);
         var layout = new InventoryLayout(this.builder.getType());
@@ -50,6 +55,9 @@ public class DeleteInventory {
         layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(ABORT_COMPONENT), this::handleAbortClick);
 
         this.builder.setLayout(layout);
+
+        this.builder.setCloseFunction(event -> event.getEntity().openInventory(reOpenInventory));
+        this.builder.register();
     }
 
     /**
@@ -61,8 +69,9 @@ public class DeleteInventory {
      */
     private void handleAbortClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
         player.closeInventory();
-        player.removeTag(Tags.DELETE_FLOOR);
+        player.removeTag(Tags.FLOOR_ID);
     }
 
     /**
@@ -79,21 +88,22 @@ public class DeleteInventory {
         if (item.isAir()) return;
 
         if (item.material() == Material.LIME_DYE) {
-            var floorAsName = player.getTag(Tags.DELETE_FLOOR);
-            var floor = floorGetMethod.getFloor(floorAsName);
+            var floorAsName = player.getTag(Tags.FLOOR_ID);
+            var floor = floorGetMethod.getFloorById(floorAsName);
 
             if (floor == null) {
+                MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
                 player.closeInventory();
-                player.removeTag(Tags.DELETE_FLOOR);
+                player.removeTag(Tags.FLOOR_ID);
                 player.sendMessage(Messages.ERROR_FLOOR_DELETE);
                 return;
             }
 
             EventDispatcher.call(new FloorRemoveEvent(player, floor));
         }
-
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
         player.closeInventory();
-        player.removeTag(Tags.DELETE_FLOOR);
+        player.removeTag(Tags.FLOOR_ID);
     }
 
     /**
@@ -101,8 +111,8 @@ public class DeleteInventory {
      * @param player the player who should get the inventory
      * @param floor the floor which is involved
      */
-    public void openInventory(@NotNull Player player, @NotNull String floor) {
-        player.setTag(Tags.DELETE_FLOOR, floor);
+    public void openInventory(@NotNull Player player, @NotNull UUID floor) {
+        player.setTag(Tags.FLOOR_ID, floor);
         player.openInventory(builder.getInventory());
     }
 }
