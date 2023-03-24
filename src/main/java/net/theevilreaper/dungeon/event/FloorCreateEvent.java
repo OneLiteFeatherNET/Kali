@@ -4,6 +4,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.trait.CancellableEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.theevilreaper.dungeon.data.floor.Floor;
+import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,7 +62,7 @@ public final class FloorCreateEvent implements PlayerEvent, CancellableEvent {
     }
 
     /**
-     * Returns the involved {@link Floor}.
+     * Returns the involved {@link FloorDTO}.
      * @return the given floor
      */
     @NotNull
