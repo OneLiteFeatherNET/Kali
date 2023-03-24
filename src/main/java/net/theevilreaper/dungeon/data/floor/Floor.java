@@ -1,190 +1,118 @@
 package net.theevilreaper.dungeon.data.floor;
 
-import dev.morphia.annotations.*;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.tag.Tag;
-import net.theevilreaper.dungeon.data.DungeonObject;
-import net.theevilreaper.dungeon.data.room.AbstractRoom;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.UUID;
 
-@Entity("floors")
-public class Floor extends DungeonObject {
+/**
+ * The class contains the structure which describes a floor.
+ * @author theEvilReaper
+ * @version 1.0.0
+ * @since 1.0.0
+ **/
+public interface Floor {
 
-    private int floorID = 1;
-
-    public static final Tag<String> NAME_TAG = Tag.String("name");
-
-    @Transient
-    private static final List<Component> LORE = List.of(
-        Component.empty(),
-        Component.text("LeftClick: ", NamedTextColor.GRAY).append(Component.text("Edit").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.GREEN))),
-        Component.empty(),
-        Component.text("RightClick: ", NamedTextColor.GRAY).append(Component.text("Delete").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.RED))),
-        Component.empty()
-    );
-
-    private final transient Lock lock;
-
-    @Property("external")
-    private String externalName;
-
-    private transient HashMap<String, AbstractRoom> rooms;
-
-    public Floor() {
-        super("empty");
-        this.lock = new ReentrantLock();
-    }
-
-    public Floor(@NotNull String name, @NotNull String externalName, @NotNull Material material, @NotNull String description, int floorID) {
-        super(name, material, description);
-        this.externalName = externalName;
-        this.rooms = new HashMap<>();
-        this.lock = new ReentrantLock();
-        this.floorID = floorID;
-    }
-
-    public Floor(@NotNull String name, @NotNull String externalName, @NotNull Material material, int floorID) {
-        super(name, material);
-        this.externalName = externalName;
-        this.floorID = floorID;
-        this.rooms = new HashMap<>();
-        this.lock = new ReentrantLock();
+    /**
+     * Creates a new instance from the {@link FloorBuilder}.
+     * @return the created instance
+     */
+    @Contract(pure = true)
+    static @NotNull Builder builder() {
+        return new FloorBuilder();
     }
 
     /**
-     * Sets a new id for the floor.
-     * @param floorID the id to set
+     * Creates a new instance from the {@link FloorBuilder} to update a given {@link FloorDTO} object
+     * @param floor the floor to update
+     * @return the created instance
      */
-    public void setFloorID(int floorID) {
-        this.floorID = floorID;
+    @Contract("_ -> new")
+    static @NotNull Builder builder(@NotNull FloorDTO floor) {
+        return new FloorBuilder(floor);
     }
 
     /**
-     * Set a new external name for the floor.
-     * @param externalName the name to set
+     * Returns a boolean indicator if the floor reference has a name.
+     * @return true when the name is not null and is not empty otherwise false
      */
-    public void setExternalName(@NotNull String externalName) {
-        this.externalName = externalName;
-    }
-
-    public void setRooms(@NotNull HashMap<String, AbstractRoom> rooms) {
-        try {
-            lock.lock();
-            this.rooms = rooms;
-        } finally {
-            lock.unlock();
-        }
-    }
+    boolean hasName();
 
     /**
-     * Add a new room to the floor.
-     * @param name the name from the floor
-     * @param abstractRoom the room object
-     * @return the added room object
+     * Returns the given id from the floor.
+     * @return the underlying id
      */
-    public AbstractRoom addRoom(@NotNull String name, @NotNull AbstractRoom abstractRoom) {
-        try {
-            lock.lock();
-            return this.rooms.putIfAbsent(name, abstractRoom);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Nullable
-    public AbstractRoom getRoom(@NotNull String name) {
-        try {
-            lock.lock();
-            return this.rooms.get(name);
-        } finally {
-            lock.unlock();
-        }
-    }
+    int id();
 
     /**
-     * Removes the room from the underlying map.
-     * @param name the name from the room to remove
-     * @return True if the room is removed
+     * Returns the given {@link UUID} from the floor.
+     * @return the underlying uuid
      */
-    public boolean removeRoom(@NotNull String name) {
-        try {
-            lock.lock();
-            return this.rooms.remove(name) != null;
-        } finally {
-            lock.unlock();
-        }
-    }
+    @NotNull UUID getUUID();
 
     /**
-     * Returns the icon {@link ItemStack} from the floor.
-     * @return the given {@link ItemStack}
+     * Returns the given name.
+     * @return the name
      */
-    @Override
-    public @NotNull ItemStack getItemStack() {
-        if (itemStack == null) {
-            this.itemStack = ItemStack.of(material)
-                    .with(builder -> builder.displayName(Component.text(this.name, NamedTextColor.RED))
-                            .lore(LORE)
-                            .set(NAME_TAG, externalName));
-        }
-        return itemStack;
-    }
+    @NotNull String getName();
 
     /**
-     * Returns the external name from the floor.
-     * The name is used for the folder name
-     * @return the given external name
+     * Returns the external name.
+     * @return null when there is no external name otherwise the given value
      */
-    @NotNull
-    public String getExternalName() {
-        return externalName;
-    }
+    @Nullable String getExternalName();
+
+    @NotNull Material getMaterial();
 
     /**
-     * Returns the map which contains all registered {@link AbstractRoom} from the floor.
-     * @return the given map with the entries
+     * Returns the {@link ItemStack} which can be used to show the floor in an inventory.
+     * @return the given stack
      */
-    @NotNull
-    public HashMap<String, AbstractRoom> getRooms() {
-        try {
-            lock.lock();
-            return rooms;
-        } finally {
-            lock.unlock();
-        }
-    }
+    @NotNull ItemStack getItemStack();
 
     /**
-     * Returns the floor id from the object.
-     * The default value for the id is one
-     * @return the given id
+     * The interface contains all methods which are relevant to build a new object instance from a {@link FloorDTO}.
+     * @author theEvilReaper
+     * @since 1.0.0
+     * @version 1.0.0
      */
-    public int getFloorID() {
-        return floorID;
-    }
+    sealed interface Builder permits FloorBuilder {
 
-    /**
-     * Returns a string representation from the floor.
-     * @return the string representation
-     */
-    @Override
-    public String toString() {
-        return "Floor{" +
-                "lock=" + lock +
-                ", externalName='" + externalName + '\'' +
-                ", name='" + name + '\'' +
-                ", material=" + material +
-                '}';
+        /**
+         * Set the name for the floor.
+         * @param name the name to set
+         * @return the builder instance
+         */
+        @NotNull Builder setName(@NotNull String name);
+
+        /**
+         * Set the externalName for the floor.
+         * @param externalName the externalName to set
+         * @return the builder instance
+         */
+        @NotNull Builder setExternalName(@NotNull String externalName);
+
+        /**
+         * Set the material for the floor.
+         * @param material the material as string to set
+         * @return the builder instance
+         */
+        @NotNull Builder setMaterial(@NotNull Material material);
+
+        /**
+         * Set the id for the floor.
+         * @param id the id to set
+         * @return the builder instance
+         */
+        @NotNull Builder setId(int id);
+
+        /**
+         * Creates a new instance from an {@link FloorDTO}.
+         * @return the created instance
+         */
+        @NotNull FloorDTO build();
     }
 }
