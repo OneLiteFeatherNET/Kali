@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,11 +18,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public class FloorProvider {
+public class FloorProvider implements FloorGetMethod {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FloorProvider.class);
     private final Lock lock;
-    private Set<Floor> floors;
+    private Set<Floor> floorDTOS;
     private FloorDatabaseHandler floorDatabaseHandler;
 
     public FloorProvider(MongoDatabase database) {
@@ -29,63 +30,83 @@ public class FloorProvider {
             this.floorDatabaseHandler = new FloorDatabaseHandler(database);
         }
         this.lock = new ReentrantLock();
-        this.floors = loadFloors();
+        this.floorDTOS = loadFloors();
     }
 
     private Set<Floor> loadFloors() {
-        this.floors = new HashSet<>();
+        this.floorDTOS = new HashSet<>();
 
         if (this.floorDatabaseHandler == null) {
-            return floors;
+            return floorDTOS;
         }
 
         var databaseFloors = this.floorDatabaseHandler.getAllEntries();
 
         if (!databaseFloors.isEmpty())  {
-            this.floors.addAll(databaseFloors);
-            LOGGER.info("Found {} Floor objects in the database", floors.size());
+            this.floorDTOS.addAll(databaseFloors);
+            LOGGER.info("Found {} Floor objects in the database", floorDTOS.size());
         }
-        return floors;
+        return floorDTOS;
     }
 
-    public void addFloor(@NotNull Floor floor) {
+    public void addFloor(@NotNull Floor floorDTO) {
         try {
             lock.lock();
-            if (this.floors.add(floor)) {
-                this.floorDatabaseHandler.insert(floor);
+            if (this.floorDTOS.add(floorDTO)) {
+                this.floorDatabaseHandler.insert(floorDTO);
             }
         } finally {
             lock.unlock();
         }
     }
 
-    public void removeFloor(@NotNull Floor floor) {
+    public void removeFloor(@NotNull Floor floorDTO) {
         try {
             lock.lock();
-            if (this.floors.remove(floor)) {
-                this.floorDatabaseHandler.delete(floor);
+            if (this.floorDTOS.remove(floorDTO)) {
+                this.floorDatabaseHandler.delete(floorDTO);
             }
         } finally {
             lock.unlock();
         }
     }
 
-    @Nullable
-    public Floor getFloor(@NotNull String name) {
+    public @Nullable Floor getFloor(@NotNull String name) {
         try {
             lock.lock();
-            if (floors.isEmpty()) return null;
+            if (floorDTOS.isEmpty()) return null;
 
-            Iterator<Floor> iterator = floors.iterator();
+            Iterator<Floor> iterator = floorDTOS.iterator();
 
-            Floor floor = null;
+            Floor floorDTO = null;
 
-            while (iterator.hasNext() && floor == null) {
+            while (iterator.hasNext() && floorDTO == null) {
                 var current = iterator.next();
-                if (current.getName().equals(name)) floor = current;
+                if (current.getExternalName().equals(name)) floorDTO = current;
 
             }
-            return floor;
+            return floorDTO;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public @Nullable Floor getFloorById(@NotNull UUID uuid) {
+        try {
+            lock.lock();
+            if (floorDTOS.isEmpty()) return null;
+            Iterator<Floor> iterator = floorDTOS.iterator();
+
+            Floor floorDTO = null;
+
+            while (iterator.hasNext() && floorDTO == null) {
+                var current = iterator.next();
+                if (current.getUUID().equals(uuid)) floorDTO = current;
+
+            }
+            return floorDTO;
+
         } finally {
             lock.unlock();
         }
@@ -94,7 +115,7 @@ public class FloorProvider {
     public Set<Floor> getFloors() {
         try {
             lock.lock();
-            return floors;
+            return floorDTOS;
         } finally {
             lock.unlock();
         }
