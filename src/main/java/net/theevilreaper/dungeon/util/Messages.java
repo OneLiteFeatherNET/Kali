@@ -65,6 +65,11 @@ public class Messages {
                     NamedTextColor.RED
             ));
 
+    public static final Component ABORT_FLOOR_CREATION =
+            Messages.PREFIX.append(Component.text(
+                    "Unable to create floor because the name is missing", NamedTextColor.RED
+            ));
+
     public static final List<Component> FILTER_LORE = new ArrayList<>();
     public static final List<Component> FLOOR_LORE = new ArrayList<>();
 
