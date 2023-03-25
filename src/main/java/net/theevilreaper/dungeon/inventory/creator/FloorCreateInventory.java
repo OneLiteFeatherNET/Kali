@@ -19,6 +19,7 @@ import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
+import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,12 +43,15 @@ public class FloorCreateInventory {
             .displayName(Component.text("Change icon")).build();
     private static final ItemStack SAVE = ItemStack.builder(Material.GREEN_STAINED_GLASS_PANE)
             .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
+
+    private static final ItemStack NAME_TAG = ItemStack.builder(Material.NAME_TAG).build();
+
     private final PersonalInventoryBuilder inventory;
     private final PersonalInventoryBuilder inputGui;
     private String name;
     private int clickedSlot;
 
-    private FloorDTO.Builder builder;
+    private final FloorDTO.Builder builder;
 
     public FloorCreateInventory(@NotNull Player owningPlayer) {
         this.builder = Floor.builder();
@@ -60,12 +64,7 @@ public class FloorCreateInventory {
         layout.setItem(12, CHANGE_EXTERNAL, this::handleCreateClick);
         layout.setItem(14, CHANGE_ID, this::handleCreateClick);
         layout.setItem(16, CHANGE_ICON, this::handleCreateClick);
-        layout.setItem(layout.getContents().length - 1, SAVE, (player, clickType, slotID, result) -> {
-            player.setTag(CLOSE, 1);
-            result.setCancel(true);
-            player.closeInventory();
-            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player));
-        });
+        layout.setItem(layout.getContents().length - 1, SAVE, this::handleCloseClick);
 
         this.inventory.setLayout(layout);
         this.inventory.setCloseFunction(event -> {
@@ -81,12 +80,8 @@ public class FloorCreateInventory {
 
         this.inputGui = new PersonalInventoryBuilder(SETUP_TITLE, InventoryType.ANVIL, owningPlayer);
         var createLayout = new InventoryLayout(this.inputGui.getType());
-        createLayout.setNonClickItem(0, ItemStack.of(Material.NAME_TAG));
-        createLayout.setItem(2, ItemStack.builder(Material.NAME_TAG), (player1, clickType, slotID, condition) -> {
-            condition.setCancel(true);
-            player1.closeInventory();
-            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player1));
-        });
+        createLayout.setNonClickItem(0, NAME_TAG);
+        createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {
             switch (this.clickedSlot) {
@@ -107,7 +102,7 @@ public class FloorCreateInventory {
                         var slot = layout.getSlot(14);
                         layout.update(14, update(slot.getItem(), name), slot.getClick());
                     } catch (NumberFormatException exception) {
-                        owningPlayer.sendMessage("NO NUMBER");
+                        owningPlayer.sendMessage(Messages.NO_NUMBER);
                     }
                 }
                 case 16 -> {
@@ -132,11 +127,24 @@ public class FloorCreateInventory {
         return newItem.build();
     }
 
+    private void handleInputClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+        result.setCancel(true);
+        player.closeInventory();
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player));
+    }
+
     private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         this.clickedSlot = slot;
         player.closeInventory();
         this.inputGui.open();
+    }
+
+    private void handleCloseClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+        player.setTag(CLOSE, 1);
+        result.setCancel(true);
+        player.closeInventory();
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player));
     }
 
     public void unregister() {
