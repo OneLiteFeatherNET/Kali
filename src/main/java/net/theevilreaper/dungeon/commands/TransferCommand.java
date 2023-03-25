@@ -10,7 +10,6 @@ import net.minestom.server.command.builder.arguments.ArgumentString;
 import net.minestom.server.command.builder.condition.Conditions;
 import net.minestom.server.entity.Player;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import static net.theevilreaper.dungeon.util.Messages.*;
@@ -24,9 +23,8 @@ import static net.theevilreaper.dungeon.util.Messages.*;
 public class TransferCommand extends Command {
 
     private static final Component COMMAND_USAGE =
-            Messages.PREFIX.append(Component.text("Please use", NamedTextColor.GRAY))
+            buildPrefixedComponent(Component.text("Please use", NamedTextColor.GRAY))
                     .append(Component.text("/transfer <name>", NamedTextColor.YELLOW));
-
     private final ArgumentString targetArgument;
 
     public TransferCommand() {
