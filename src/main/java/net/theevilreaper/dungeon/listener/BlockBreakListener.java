@@ -3,7 +3,7 @@ package net.theevilreaper.dungeon.listener;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
-import net.theevilreaper.dungeon.inventory.RegionInventory;
+import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
