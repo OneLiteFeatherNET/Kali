@@ -4,17 +4,21 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Messages {
+public final class Messages {
 
-    public static final Component PREFIX =
-            LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    "§7[§eEditor§7] "
-            );
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    private static final Component PREFIX =
+            MINI_MESSAGE.deserialize("<gradient:#ffff0a:#40f9ff>Editor</gradient> ");
+
+    public static final Component NO_NUMBER =
+            buildPrefixedComponent(Component.text("The input is not a number", NamedTextColor.RED));
 
     public static final Component LOCKED_INSTANCE =
             PREFIX.append(Component.text("The instance is locked. Abort teleportation", NamedTextColor.RED));
@@ -89,4 +93,8 @@ public class Messages {
     }
 
     private Messages() {}
+
+    public static @NotNull Component buildPrefixedComponent(@NotNull Component component) {
+        return PREFIX.append(component);
+    }
 }
