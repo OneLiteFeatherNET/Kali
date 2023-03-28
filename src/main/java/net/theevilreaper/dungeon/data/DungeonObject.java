@@ -127,7 +127,7 @@ public class DungeonObject implements Serializable {
 
     /**
      * Return the {@link ItemStack} from the object class.
-     * The stack can be used as icon for a inventory or something else.
+     * The stack can be used as icon for an inventory or something else.
      * When the stack is null the methods creates a new {@link ItemStack}.
      * @return the underlying {@link ItemStack} reference
      */
