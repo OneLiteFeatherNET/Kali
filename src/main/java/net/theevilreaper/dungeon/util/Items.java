@@ -24,6 +24,8 @@ public class Items {
     public static final byte FLOOR_ITEM = 1;
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
             .displayName(Component.empty()).build();
+    public static final ItemStack BACK_SLOT = ItemStack.builder(Material.RED_STAINED_GLASS_PANE)
+            .displayName(Component.text("Back", NamedTextColor.RED)).build();
     private static final byte DEFAULT_HELD_SLOT = (byte)4;
     private final ItemStack regionTool;
     private final ItemStack floorSelector;
