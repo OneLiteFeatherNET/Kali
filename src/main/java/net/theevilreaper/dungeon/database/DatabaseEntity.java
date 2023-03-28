@@ -1,6 +1,5 @@
 package net.theevilreaper.dungeon.database;
 
-import net.theevilreaper.dungeon.data.DungeonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public interface DatabaseEntity<T extends DungeonObject> {
+public interface DatabaseEntity<T> {
 
     /**
      * Inserts a new object from T into the database.
