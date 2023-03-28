@@ -36,7 +36,7 @@ public class EditInstance extends InstanceContainer {
 
     private static final Component TIME_TEXT = Component
             .text("Instance will be deleted in ", NamedTextColor.RED);
-    private static final Component RESET_COMPONENT = Messages.PREFIX.append(
+    private static final Component RESET_COMPONENT = Messages.buildPrefixedComponent(
             LegacyComponentSerializer.legacySection().deserialize("§cThis instance will be deleted in §65 §cMinutes ")
                     .append(Component.text("[", NamedTextColor.GRAY)
                             .append(Component.text("Reset").color(TextColor.fromHexString("#99ff33"))))
