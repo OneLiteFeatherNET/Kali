@@ -1,4 +1,4 @@
-package net.theevilreaper.dungeon.inventory;
+package net.theevilreaper.dungeon.inventory.region;
 
 import de.icevizion.aves.inventory.GlobalInventoryBuilder;
 import de.icevizion.aves.inventory.InventoryLayout;

@@ -15,8 +15,11 @@ import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.Floor;
+import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
+import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
+import net.theevilreaper.dungeon.inventory.region.search.SearchInventory;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Messages;
@@ -25,13 +28,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+import static net.theevilreaper.dungeon.util.Items.BACK_SLOT;
+
 @SuppressWarnings("java:S3252")
 public class RoomSelector {
 
     private static final int START_SLOT = 9;
     private final GlobalInventoryBuilder builder;
     private final EditInstanceManager editInstanceManager;
-    private final Floor floor;
+    private final Floor floorDTO;
     private final Pos defaultPos;
     private final Consumer<EditInstance> editInstanceConsumer;
     private final InventoryBuilder inventoryBuilder;
@@ -39,14 +44,14 @@ public class RoomSelector {
 
     public RoomSelector(@NotNull EditInstanceManager editInstanceManager,
                         @NotNull LocationProvider locationProvider,
-                        @NotNull Floor floor,
+                        @NotNull Floor floorDTO,
                         @NotNull InventoryBuilder floorBuilder,
                         @NotNull Consumer<EditInstance> editInstanceConsumer) {
         this.editInstanceManager = editInstanceManager;
         this.editInstanceConsumer = editInstanceConsumer;
         this.floorBuilder = floorBuilder;
         this.defaultPos = locationProvider.getDefaultPos().add(0, 20, 0);
-        this.floor = floor;
+        this.floorDTO = floorDTO;
         this.inventoryBuilder = floorBuilder;
         this.builder = new GlobalInventoryBuilder(Component.text("Select the room to edit"), InventoryType.CHEST_6_ROW);
         var layout = new InventoryLayout(this.builder.getType());
@@ -54,29 +59,33 @@ public class RoomSelector {
         Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
 
-        var closeItem = ItemStack.builder(Material.RED_STAINED_GLASS_PANE).displayName(Component.text("Back", NamedTextColor.RED)).build();
-        layout.setItem(layout.getContents().length - 1, closeItem, this::handleClose);
-        layout.setItem(12, ItemStack.builder(Material.GRAY_BANNER).build(), this::handleClick);
+        layout.setItem(49, ItemStack.builder(Material.HOPPER).displayName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, clickType, i, inventoryConditionResult) -> {
+            inventoryConditionResult.setCancel(true);
+
+            if (clickType == ClickType.RIGHT_CLICK) {
+                MinecraftServer.getGlobalEventHandler().call(new PlayerSearchChangeEvent(player, null));
+                return;
+            }
+
+            if (clickType == ClickType.LEFT_CLICK) {
+                new SearchInventory().open(player);
+            }
+
+        });
+
+        layout.setItem(layout.getContents().length - 1, BACK_SLOT, this::handleClose);
+
+        var item = ItemStack.builder(Material.PAPER).build();
+
+        for (int i = 0; i < 25; i++) {
+            layout.setNonClickItem(i, item);
+        }
+
+        layout.setNonClickItem(20, ItemStack.builder(Material.DRAGON_HEAD).build());
 
         this.builder.setCloseFunction(event -> event.setNewInventory(floorBuilder.getInventory()));
         this.builder.setLayout(layout);
         this.builder.register();
-    }
-
-    public void updateRoomItems() {
-        if (this.floor == null || this.floor.getRooms().isEmpty()) return;
-
-        var layout = this.inventoryBuilder.getLayout();
-
-        if (layout == null) return;
-
-        int counter = START_SLOT;
-
-        for (var roomEntry : this.floor.getRooms().entrySet()) {
-            counter++;
-        }
-
-        this.inventoryBuilder.invalidateLayout();
     }
 
     public void open(@NotNull Player player) {
