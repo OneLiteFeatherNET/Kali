@@ -2,6 +2,7 @@ package net.theevilreaper.dungeon.data.floor;
 
 import de.icevizion.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -27,13 +28,15 @@ public interface FloorMetaDataSetter {
         if (externalName) {
             builder.setExternalName(input);
             layout.update(METADATA_EXTERNAL_NAME_SLOT, update(slot.getItem(), input), slot.getClick());
-            player.sendMessage(buildPrefixedComponent(Component.text("Externalname set")));
+            player.sendMessage(buildPrefixedComponent(Component.text("The external name is set to: ")
+                    .append(Component.text(input, NamedTextColor.GOLD))));
             return;
         }
 
         builder.setName(input);
         layout.update(METADATA_NAME_SLOT, update(slot.getItem(), input), slot.getClick());
-        player.sendMessage(buildPrefixedComponent(Component.text("Name set")));
+        player.sendMessage(buildPrefixedComponent(Component.text("The name is set to: ")
+                .append(Component.text(input, NamedTextColor.GOLD))));
     }
 
     default void setFloorId(@NotNull String input, @NotNull Floor.Builder builder, @NotNull Player player, @NotNull InventoryLayout layout) {
@@ -50,7 +53,11 @@ public interface FloorMetaDataSetter {
     default void setMaterial(@NotNull String input, @NotNull Floor.Builder builder, @NotNull Player player, @NotNull InventoryLayout layout) {
         var material = Material.fromNamespaceId("minecraft:" + input);
 
-        if (material == null) material = Material.STONE;
+        if (material == null) {
+            player.sendMessage(buildPrefixedComponent(Component.text(input, NamedTextColor.RED)
+                    .append(Component.text(" is not a valid material", NamedTextColor.GRAY))));
+            material = Material.STONE;
+        }
 
         builder.setMaterial(material);
         var slot = layout.getSlot(METADATA_MATERIAL_SLOT);
