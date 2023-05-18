@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public class FloorProvider implements FloorGetMethod {
+public final class FloorProvider implements FloorGetMethod {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FloorProvider.class);
     private final Lock lock;
@@ -53,6 +53,7 @@ public class FloorProvider implements FloorGetMethod {
         try {
             lock.lock();
             if (this.floorDTOS.add(floorDTO)) {
+                if (this.floorDatabaseHandler == null) return;
                 this.floorDatabaseHandler.insert(floorDTO);
             }
         } finally {
@@ -64,6 +65,7 @@ public class FloorProvider implements FloorGetMethod {
         try {
             lock.lock();
             if (this.floorDTOS.remove(floorDTO)) {
+                if (this.floorDatabaseHandler == null) return;
                 this.floorDatabaseHandler.delete(floorDTO);
             }
         } finally {
@@ -82,7 +84,7 @@ public class FloorProvider implements FloorGetMethod {
 
             while (iterator.hasNext() && floorDTO == null) {
                 var current = iterator.next();
-                if (current.getExternalName().equals(name)) floorDTO = current;
+                if (current.getName().equals(name)) floorDTO = current;
 
             }
             return floorDTO;
