@@ -98,7 +98,7 @@ public class FloorCreateInventory {
                 case 14 -> {
                     try {
                         var id = Integer.parseInt(name);
-                        this.builder.setId(id);
+                        this.builder.setFloorID(id);
                         var slot = layout.getSlot(14);
                         layout.update(14, update(slot.getItem(), name), slot.getClick());
                     } catch (NumberFormatException exception) {
