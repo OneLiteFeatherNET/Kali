@@ -12,9 +12,9 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public final class FloorBuilder implements FloorDTO.Builder {
+public final class FloorBuilder implements Floor.Builder {
 
-    private final UUID uuid;
+    private UUID uuid;
     private int floorID;
     private String name;
     private String externalName;
@@ -23,9 +23,7 @@ public final class FloorBuilder implements FloorDTO.Builder {
     /**
      * Creates a new reference from the builder class.
      */
-    public FloorBuilder() {
-        this.uuid = UUID.randomUUID();
-    }
+    public FloorBuilder() {}
 
     /**
      * Creates a new reference from the builder class.
@@ -40,33 +38,40 @@ public final class FloorBuilder implements FloorDTO.Builder {
     }
 
     @Override
-    public FloorDTO.@NotNull Builder setName(@NotNull String name) {
+    public Floor.@NotNull Builder setName(@NotNull String name) {
         Check.argCondition(name.trim().isEmpty(), "The name can't be empty");
         this.name = name;
         return this;
     }
 
     @Override
-    public FloorDTO.@NotNull Builder setExternalName(@NotNull String externalName) {
+    public Floor.@NotNull Builder setExternalName(@NotNull String externalName) {
         this.externalName = externalName;
         return this;
     }
 
     @Override
-    public FloorDTO.@NotNull Builder setMaterial(@NotNull Material material) {
+    public Floor.@NotNull Builder setMaterial(@NotNull Material material) {
         this.material = material;
         return this;
     }
 
     @Override
-    public FloorDTO.@NotNull Builder setId(int id) {
+    public Floor.@NotNull Builder setFloorID(int id) {
         Check.argCondition(id < 0, "The id can't be negative");
         this.floorID = id;
         return this;
     }
 
     @Override
+    public Floor.@NotNull Builder setUUID(@NotNull UUID uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    @Override
     public @NotNull FloorDTO build() {
+        uuid = uuid == null ? UUID.randomUUID() : uuid;
         material = material == null ? Material.STONE : material;
         return new FloorDTO(uuid, name == null ? "" : name, externalName, material, floorID);
     }

@@ -107,7 +107,14 @@ public interface Floor {
          * @param id the id to set
          * @return the builder instance
          */
-        @NotNull Builder setId(int id);
+        @NotNull Builder setFloorID(int id);
+
+        /**
+         * Set the uuid for the floor object.
+         * @param uuid the uuid to set
+         * @return the builder instance
+         */
+        @NotNull Builder setUUID(@NotNull UUID uuid);
 
         /**
          * Creates a new instance from an {@link FloorDTO}.
