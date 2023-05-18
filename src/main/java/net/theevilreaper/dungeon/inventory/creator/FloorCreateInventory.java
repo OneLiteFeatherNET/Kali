@@ -17,6 +17,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.data.floor.FloorDTO;
+import net.theevilreaper.dungeon.data.floor.FloorMetaDataSetter;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Messages;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  **/
 @SuppressWarnings("java:S3252")
-public class FloorCreateInventory {
+public class FloorCreateInventory implements FloorMetaDataSetter {
 
     private static final Tag<Integer> CLOSE = Tag.Integer("close");
     private static final Component INV_TITLE = Component.text("Create floor");
@@ -45,12 +46,10 @@ public class FloorCreateInventory {
             .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
 
     private static final ItemStack NAME_TAG = ItemStack.builder(Material.NAME_TAG).build();
-
     private final PersonalInventoryBuilder inventory;
     private final PersonalInventoryBuilder inputGui;
     private String name;
     private int clickedSlot;
-
     private final FloorDTO.Builder builder;
 
     public FloorCreateInventory(@NotNull Player owningPlayer) {
@@ -60,10 +59,10 @@ public class FloorCreateInventory {
         var layout = new InventoryLayout(this.inventory.getType());
 
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
-        layout.setItem(10, CHANGE_NAME, this::handleCreateClick);
-        layout.setItem(12, CHANGE_EXTERNAL, this::handleCreateClick);
-        layout.setItem(14, CHANGE_ID, this::handleCreateClick);
-        layout.setItem(16, CHANGE_ICON, this::handleCreateClick);
+        layout.setItem(METADATA_NAME_SLOT, CHANGE_NAME, this::handleCreateClick);
+        layout.setItem(METADATA_EXTERNAL_NAME_SLOT, CHANGE_EXTERNAL, this::handleCreateClick);
+        layout.setItem(METADATA_ID_SLOT, CHANGE_ID, this::handleCreateClick);
+        layout.setItem(METADATA_MATERIAL_SLOT, CHANGE_ICON, this::handleCreateClick);
         layout.setItem(layout.getContents().length - 1, SAVE, this::handleCloseClick);
 
         this.inventory.setLayout(layout);
@@ -84,47 +83,17 @@ public class FloorCreateInventory {
         createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {
-            switch (this.clickedSlot) {
-                case 10 -> {
-                    this.builder.setName(name);
-                    var slot = layout.getSlot(10);
-                    layout.update(10, update(slot.getItem(), name), slot.getClick());
-                }
-                case 12 -> {
-                    this.builder.setExternalName(name);
-                    var slot = layout.getSlot(12);
-                    layout.update(12, update(slot.getItem(), name), slot.getClick());
-                }
-                case 14 -> {
-                    try {
-                        var id = Integer.parseInt(name);
-                        this.builder.setFloorID(id);
-                        var slot = layout.getSlot(14);
-                        layout.update(14, update(slot.getItem(), name), slot.getClick());
-                    } catch (NumberFormatException exception) {
-                        owningPlayer.sendMessage(Messages.NO_NUMBER);
-                    }
-                }
-                case 16 -> {
-                    var material = Material.fromNamespaceId("minecraft:" + name);
-
-                    if (material == null) material = Material.STONE;
-
-                    this.builder.setMaterial(material);
-                    var slot = layout.getSlot(16);
-                    layout.update(16, update(slot.getItem(), name), slot.getClick());
-                }
+            if (this.clickedSlot == METADATA_NAME_SLOT || this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT) {
+                this.setName(name, builder, owningPlayer, layout, this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT);
+            } else if (this.clickedSlot == METADATA_ID_SLOT) {
+                this.setFloorId(name, builder, owningPlayer, layout);
+            } else {
+                this.setMaterial(name, builder, owningPlayer, layout);
             }
             inventory.invalidateLayout();
             inventory.open();
         });
         this.inputGui.register();
-    }
-
-    private @NotNull ItemStack update(@NotNull ItemStack itemStack, @NotNull String input) {
-        var newItem = ItemStack.builder(itemStack.material()).displayName(itemStack.getDisplayName());
-        newItem.lore(Component.empty(), Component.text("Value: " + input));
-        return newItem.build();
     }
 
     private void handleInputClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
