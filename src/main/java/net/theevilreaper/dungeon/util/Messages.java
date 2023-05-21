@@ -5,6 +5,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minestom.server.coordinate.Point;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -94,7 +96,13 @@ public final class Messages {
 
     private Messages() {}
 
+    @Contract("_ -> new")
     public static @NotNull Component buildPrefixedComponent(@NotNull Component component) {
         return PREFIX.append(component);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Component transformPos(@NotNull Point pos) {
+        return Component.text("(" + pos.blockX() + ", " + pos.blockX() + ", " + pos.blockZ() + ")", NamedTextColor.GRAY);
     }
 }
