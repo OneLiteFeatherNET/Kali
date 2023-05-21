@@ -10,22 +10,19 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;
-import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TimeUpdatePacket;
 import net.minestom.server.utils.PacketUtils;
-import net.theevilreaper.dungeon.DungeonEditor;
-import net.theevilreaper.dungeon.data.room.AbstractRoom;
 import net.theevilreaper.dungeon.util.KaliDimension;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import static net.theevilreaper.dungeon.util.Messages.transformPos;
 
 /**
  * @author theEvilReaper
@@ -51,7 +48,6 @@ public class EditInstance extends InstanceContainer {
     private static final long SECONDS_AS_LONG = 1000;
     private static final int MAXIMUM_ALIVE = 1800;
     private final BossBar bossBar;
-    private Path originPath;
     private Player owner;
     private int currentCounter;
     private long nextTick;
@@ -59,29 +55,17 @@ public class EditInstance extends InstanceContainer {
     private boolean locked;
     private Point firstPos;
     private Point secondPos;
-    private AbstractRoom abstractRoom;
-    private AnvilLoader anvilLoader;
     private boolean send;
     private final Consumer<EditInstance> containerConsumer;
 
     public EditInstance(@NotNull Consumer<EditInstance> containerConsumer) {
         super(UUID.randomUUID(), KaliDimension.KALI_DIMENSION);
-        //TODO: Add a factory to provide this path
-        this.originPath = DungeonEditor.ROOT_PATH.resolve("rooms");
-        //TODO: Provide one single gson file writer to write the or read the room structure
         this.bossBar = BossBar.bossBar(Component.empty(), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
         this.currentCounter = MAXIMUM_ALIVE;
         this.nextResetMessageTick = System.currentTimeMillis() + (SECONDS_AS_LONG * 1560);
         this.calculateNextTick();
         this.setTime(START_TIME);
         this.containerConsumer = containerConsumer;
-        //TODO: Rework the anvilloader binding
-        /*
-
-        var path = this.originPath.resolve("test_room");
-        this.anvilLoader = new AnvilLoader(Path.of(path.toString(), "test_room"));
-
-        setChunkLoader(new AnvilLoader(path));*/
     }
 
     @Override
@@ -124,10 +108,6 @@ public class EditInstance extends InstanceContainer {
         return this.createRoom();
     }
 
-    public void setRegionType() {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     public boolean createRoom() {
         if (this.firstPos == null || this.secondPos == null) {
             return false;
@@ -136,10 +116,6 @@ public class EditInstance extends InstanceContainer {
         this.secondPos = null;
         this.firstPos = null;
         return true;
-    }
-
-    public void saveRegion() {
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     public void setOwner(@NotNull Player owner) {
@@ -174,11 +150,6 @@ public class EditInstance extends InstanceContainer {
         this.nextResetMessageTick = System.currentTimeMillis() + (SECONDS_AS_LONG * 1560);
         send = false;
         this.updateTitle();
-    }
-
-    @Contract("_ -> new")
-    private @NotNull Component transformPos(@NotNull Point pos) {
-        return Component.text("(" + pos.blockX() + ", " + pos.blockX() + ", " + pos.blockZ() + ")", NamedTextColor.GRAY);
     }
 
     /**
