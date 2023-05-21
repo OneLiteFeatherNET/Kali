@@ -87,12 +87,14 @@ public class DeleteInventory {
 
         if (item.isAir()) return;
 
+        var event = new InventoryCloseEvent(player.getOpenInventory(), player);
+
         if (item.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(Tags.FLOOR_ID);
             var floor = floorGetMethod.getFloorById(floorAsName);
 
             if (floor == null) {
-                MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
+                MinecraftServer.getGlobalEventHandler().call(event);
                 player.closeInventory();
                 player.removeTag(Tags.FLOOR_ID);
                 player.sendMessage(Messages.ERROR_FLOOR_DELETE);
@@ -101,7 +103,7 @@ public class DeleteInventory {
 
             EventDispatcher.call(new FloorRemoveEvent(player, floor));
         }
-        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
+        MinecraftServer.getGlobalEventHandler().call(event);
         player.closeInventory();
         player.removeTag(Tags.FLOOR_ID);
     }
