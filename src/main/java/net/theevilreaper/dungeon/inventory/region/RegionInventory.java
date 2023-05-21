@@ -56,7 +56,6 @@ public class RegionInventory {
             return;
         }
 
-        editInstance.setRegionType();
         player.closeInventory();
     }
 
