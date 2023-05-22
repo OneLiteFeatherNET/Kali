@@ -5,7 +5,7 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.entity.Player;
-import net.theevilreaper.dungeon.inventory.RegionInventory;
+import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import org.jetbrains.annotations.NotNull;
 
 /**

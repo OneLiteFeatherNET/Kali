@@ -16,8 +16,11 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.theevilreaper.dungeon.data.floor.Floor;
+import net.theevilreaper.dungeon.data.floor.FloorDTO;
+import net.theevilreaper.dungeon.data.floor.FloorMetaDataSetter;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
+import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,12 +29,11 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  **/
 @SuppressWarnings("java:S3252")
-public class FloorCreateInventory {
+public class FloorCreateInventory implements FloorMetaDataSetter {
 
     private static final Tag<Integer> CLOSE = Tag.Integer("close");
     private static final Component INV_TITLE = Component.text("Create floor");
     private static final Component SETUP_TITLE = Component.text("Enter a value");
-
     private static final ItemStack CHANGE_NAME = ItemStack.builder(Material.OAK_SIGN)
             .displayName(Component.text("Change name")).build();
     private static final ItemStack CHANGE_EXTERNAL = ItemStack.builder(Material.CRIMSON_SIGN)
@@ -42,74 +44,62 @@ public class FloorCreateInventory {
             .displayName(Component.text("Change icon")).build();
     private static final ItemStack SAVE = ItemStack.builder(Material.GREEN_STAINED_GLASS_PANE)
             .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
-    private final PersonalInventoryBuilder createInventory;
+
+    private static final ItemStack NAME_TAG = ItemStack.builder(Material.NAME_TAG).build();
+    private final PersonalInventoryBuilder inventory;
     private final PersonalInventoryBuilder inputGui;
-    private final Floor floor;
     private String name;
     private int clickedSlot;
+    private final FloorDTO.Builder builder;
 
     public FloorCreateInventory(@NotNull Player owningPlayer) {
-        this.floor = new Floor();
-        this.createInventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
+        this.builder = Floor.builder();
+        this.inventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
 
-        var layout = new InventoryLayout(this.createInventory.getType());
+        var layout = new InventoryLayout(this.inventory.getType());
 
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
-        layout.setItem(10, CHANGE_NAME, this::handleCreateClick);
-        layout.setItem(12, CHANGE_EXTERNAL, this::handleCreateClick);
-        layout.setItem(14, CHANGE_ID, this::handleCreateClick);
-        layout.setItem(16, CHANGE_ICON, this::handleCreateClick);
-        layout.setItem(layout.getContents().length - 1, SAVE, (player, clickType, slotID, result) -> {
-            player.setTag(CLOSE, 1);
-            result.setCancel(true);
-            player.closeInventory();
-            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.createInventory.getInventory(), player));
-        });
+        layout.setItem(METADATA_NAME_SLOT, CHANGE_NAME, this::handleCreateClick);
+        layout.setItem(METADATA_EXTERNAL_NAME_SLOT, CHANGE_EXTERNAL, this::handleCreateClick);
+        layout.setItem(METADATA_ID_SLOT, CHANGE_ID, this::handleCreateClick);
+        layout.setItem(METADATA_MATERIAL_SLOT, CHANGE_ICON, this::handleCreateClick);
+        layout.setItem(layout.getContents().length - 1, SAVE, this::handleCloseClick);
 
-        this.createInventory.setLayout(layout);
-        this.createInventory.setCloseFunction(event -> {
+        this.inventory.setLayout(layout);
+        this.inventory.setCloseFunction(event -> {
             var player = event.getPlayer();
 
             if (player.hasTag(CLOSE)) {
                 player.removeTag(CLOSE);
-                EventDispatcher.call(new FloorCreateEvent(player, floor));
+                EventDispatcher.call(new FloorCreateEvent(player, this.builder.build()));
             }
         });
 
-        this.createInventory.register();
+        this.inventory.register();
 
         this.inputGui = new PersonalInventoryBuilder(SETUP_TITLE, InventoryType.ANVIL, owningPlayer);
         var createLayout = new InventoryLayout(this.inputGui.getType());
-        createLayout.setNonClickItem(0, ItemStack.of(Material.NAME_TAG));
-        createLayout.setItem(2, ItemStack.builder(Material.NAME_TAG), (player1, clickType, slotID, condition) -> {
-            condition.setCancel(true);
-            player1.closeInventory();
-            MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player1));
-        });
+        createLayout.setNonClickItem(0, NAME_TAG);
+        createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {
-            switch (this.clickedSlot) {
-                case 10 -> this.floor.setName(name);
-                case 12 -> this.floor.setExternalName(name);
-                case 14 -> {
-                    try {
-                        var id = Integer.parseInt(name);
-                        this.floor.setFloorID(id);
-                    } catch (NumberFormatException exception) {
-                        owningPlayer.sendMessage("NO NUMBER");
-                    }
-                }
-                case 16 -> {
-                    var material = Material.fromNamespaceId("minecraft:" + name);
-
-                    if (material == null) material = Material.STONE;
-
-                    this.floor.setMaterial(material);
-                }
+            if (this.clickedSlot == METADATA_NAME_SLOT || this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT) {
+                this.setName(name, builder, owningPlayer, layout, this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT);
+            } else if (this.clickedSlot == METADATA_ID_SLOT) {
+                this.setFloorId(name, builder, owningPlayer, layout);
+            } else {
+                this.setMaterial(name, builder, owningPlayer, layout);
             }
-            createInventory.open();
+            inventory.invalidateLayout();
+            inventory.open();
         });
         this.inputGui.register();
+    }
+
+    private void handleInputClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+        result.setCancel(true);
+        player.closeInventory();
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player));
     }
 
     private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
@@ -119,8 +109,15 @@ public class FloorCreateInventory {
         this.inputGui.open();
     }
 
+    private void handleCloseClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+        player.setTag(CLOSE, 1);
+        result.setCancel(true);
+        player.closeInventory();
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player));
+    }
+
     public void unregister() {
-        this.createInventory.unregister();
+        this.inventory.unregister();
         this.inputGui.unregister();
     }
 
@@ -129,6 +126,6 @@ public class FloorCreateInventory {
     }
 
     public void open() {
-        this.createInventory.open();
+        this.inventory.open();
     }
 }

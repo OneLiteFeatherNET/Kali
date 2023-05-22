@@ -2,14 +2,25 @@ package net.theevilreaper.dungeon.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minestom.server.coordinate.Point;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class Messages {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final Component PREFIX =
-            LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    "§7[§eEditor§7] "
-            );
+public final class Messages {
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    private static final Component PREFIX =
+            MINI_MESSAGE.deserialize("<gradient:#ffff0a:#40f9ff>Editor</gradient> ");
+
+    public static final Component NO_NUMBER =
+            buildPrefixedComponent(Component.text("The input is not a number", NamedTextColor.RED));
 
     public static final Component LOCKED_INSTANCE =
             PREFIX.append(Component.text("The instance is locked. Abort teleportation", NamedTextColor.RED));
@@ -60,5 +71,38 @@ public class Messages {
                     NamedTextColor.RED
             ));
 
+    public static final Component ABORT_FLOOR_CREATION =
+            Messages.PREFIX.append(Component.text(
+                    "Unable to create floor because the name is missing", NamedTextColor.RED
+            ));
+
+    public static final List<Component> FILTER_LORE = new ArrayList<>();
+    public static final List<Component> FLOOR_LORE = new ArrayList<>();
+
+    static {
+        FILTER_LORE.add(Component.empty());
+        FILTER_LORE.add(Component.text("Click left to apply a filter"));
+        FILTER_LORE.add(Component.empty());
+        FILTER_LORE.add(Component.text("To remove the current filter please make a right click on the item"));
+
+        FLOOR_LORE.add(Component.empty());
+        FLOOR_LORE.add(Component.text("LeftClick: ", NamedTextColor.GRAY)
+                .append(Component.text("Edit").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.GREEN))));
+        FLOOR_LORE.add(Component.empty());
+        FLOOR_LORE.add(Component.text("RightClick: ", NamedTextColor.GRAY)
+                        .append(Component.text("Delete").style(Style.style().decorate(TextDecoration.BOLD).color(NamedTextColor.RED))));
+        FLOOR_LORE.add(Component.empty());
+    }
+
     private Messages() {}
+
+    @Contract("_ -> new")
+    public static @NotNull Component buildPrefixedComponent(@NotNull Component component) {
+        return PREFIX.append(component);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Component transformPos(@NotNull Point pos) {
+        return Component.text("(" + pos.blockX() + ", " + pos.blockX() + ", " + pos.blockZ() + ")", NamedTextColor.GRAY);
+    }
 }

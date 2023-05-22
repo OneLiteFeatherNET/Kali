@@ -42,14 +42,16 @@ import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.event.FloorRemoveEvent;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
-import net.theevilreaper.dungeon.inventory.FloorInventory;
-import net.theevilreaper.dungeon.inventory.RegionInventory;
+import net.theevilreaper.dungeon.inventory.floor.FloorInventory;
+import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
+import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
 import net.theevilreaper.dungeon.util.KaliDimension;
+import net.theevilreaper.dungeon.util.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,8 +117,8 @@ public class DungeonEditor extends Extension {
                 .load(getDataDirectory().resolve(DATABASE_FILE), JsonObject.class);
         jsonObject.ifPresent(object -> this.mongoDatabase = new MongoDatabase(jsonObject.get()));
         this.floorProvider = new FloorProvider(mongoDatabase);
-        this.floorInventory = new FloorInventory(editInstanceManager, locationProvider, floorProvider, floorCreateService, containerConsumer);
         this.floorCreateService = new FloorCreateService();
+        this.floorInventory = new FloorInventory(editInstanceManager, locationProvider, floorProvider, floorCreateService, containerConsumer);
         var created = false;
         if (MinecraftServer.getInstanceManager().getInstances().isEmpty()) {
             LOGGER.info("Found no existing instance. Creating a new instance");
@@ -214,8 +216,12 @@ public class DungeonEditor extends Extension {
         eventHandler.addListener(PlayerUseItemEvent.class, new ItemListener(floorInventory, locationProvider, defaultInstance));
         eventHandler.addListener(PlayerBlockInteractEvent.class, new BlockInteractListener(regionInventory));
 
-        eventHandler.addListener(FloorCreateEvent.class, floorCreateEvent -> {
-            this.floorProvider.addFloor(floorCreateEvent.getFloor());
+        eventHandler.addListener(FloorCreateEvent.class, event -> {
+            if (!event.getFloor().hasName()) {
+                event.getPlayer().sendMessage(Messages.ABORT_FLOOR_CREATION);
+                return;
+            }
+            this.floorProvider.addFloor(event.getFloor());
             this.floorInventory.updateInventoryLayout();
         });
 
@@ -223,6 +229,8 @@ public class DungeonEditor extends Extension {
             this.floorProvider.removeFloor(floorRemoveEvent.getFloor());
             this.floorInventory.updateInventoryLayout();
         });
+
+        eventHandler.addListener(PlayerSearchChangeEvent.class, new SearchChangeListener());
     }
 
     /**

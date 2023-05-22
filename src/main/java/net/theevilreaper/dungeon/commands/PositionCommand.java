@@ -11,7 +11,7 @@ import net.minestom.server.entity.Player;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static net.theevilreaper.dungeon.util.Messages.PREFIX;
+import static net.theevilreaper.dungeon.util.Messages.buildPrefixedComponent;
 
 /**
  * @author theEvilReaper
@@ -20,8 +20,8 @@ import static net.theevilreaper.dungeon.util.Messages.PREFIX;
  **/
 public class PositionCommand extends Command {
 
-    private final Component defaultComponent = Component.text("Please use: ", NamedTextColor.GRAY)
-            .append(Component.text("/pos <spawn, save>", NamedTextColor.RED));
+    private final Component defaultComponent =  buildPrefixedComponent(Component.text("Please use: ", NamedTextColor.GRAY)
+            .append(Component.text("/pos <spawn, save>", NamedTextColor.RED)));
 
     private final LocationProvider provider;
 
@@ -42,14 +42,13 @@ public class PositionCommand extends Command {
         var argument = (String) context.get("type");
 
         if ("save".equals(argument) && this.provider.save()) {
-            player.sendMessage(PREFIX
-                    .append(Component.text("Successfully saved the map", NamedTextColor.RED)));
+            player.sendMessage(buildPrefixedComponent(Component.text("Successfully saved the map", NamedTextColor.RED)));
             return;
         }
 
         if ("spawn".equals(argument)) {
             this.provider.setSpawn(player.getPosition());
-            player.sendMessage(PREFIX.append(Component.text("Set spawn pos", NamedTextColor.RED)));
+            player.sendMessage(buildPrefixedComponent(Component.text("Set spawn pos", NamedTextColor.RED)));
         }
     }
 }
