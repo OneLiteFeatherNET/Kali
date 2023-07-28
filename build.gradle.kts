@@ -56,6 +56,7 @@ dependencies {
 
     testImplementation(libs.aves)
     testImplementation(libs.minestom)
+    testImplementation(libs.minestomTesting)
     testImplementation(libs.junitApi)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoJunit)
