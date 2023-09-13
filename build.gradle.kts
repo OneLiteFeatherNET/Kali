@@ -97,8 +97,8 @@ sonarqube {
     }
 }
 
-if (System.getenv().containsKey("CI")) {
-    version = "${baseVersion}+${System.getenv("CI_COMMIT_SHORT_SHA")}"
+version = if (System.getenv().containsKey("CI")) {
+    "${baseVersion}+${System.getenv("CI_COMMIT_SHORT_SHA")}"
 } else {
-    version = baseVersion
+    baseVersion
 }
