@@ -1,8 +1,8 @@
 plugins {
     java
-    alias(libs.plugins.sonarqube)
     jacoco
     alias(libs.plugins.shadow)
+    alias(libs.plugins.sonar)
 }
 
 group = "net.theevilreaper.kali"
@@ -53,14 +53,12 @@ dependencies {
 
     compileOnly(libs.aves)
     compileOnly(libs.minestom)
-
-    testImplementation(libs.aves)
+    testImplementation(libs.minestom.test)
     testImplementation(libs.minestom)
-    testImplementation(libs.junitApi)
+    testImplementation(libs.junit.api)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoJunit)
-
-    testRuntimeOnly(libs.junitEngine)
+    testRuntimeOnly(libs.junit.engine)
 }
 
 tasks {
@@ -93,11 +91,12 @@ sonarqube {
     properties {
         property("sonar.projectKey", sonarKey)
         property("sonar.qualitygate.wait", true)
+        property("sonar.qualitygate.wait", true)
     }
 }
 
-if (System.getenv().containsKey("CI")) {
-    version = "${baseVersion}+${System.getenv("CI_COMMIT_SHORT_SHA")}"
+version = if (System.getenv().containsKey("CI")) {
+    "${baseVersion}+${System.getenv("CI_COMMIT_SHORT_SHA")}"
 } else {
-    version = baseVersion
+    baseVersion
 }
