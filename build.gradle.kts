@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.adventureMinimessage)
+    implementation(libs.mini)
     implementation(libs.morphia)
     implementation(libs.canis)
 
