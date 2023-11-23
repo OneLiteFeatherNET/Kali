@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.adventureMinimessage)
+    implementation(libs.mini)
     implementation(libs.morphia)
     implementation(libs.canis)
 
@@ -56,8 +56,8 @@ dependencies {
     testImplementation(libs.minestom.test)
     testImplementation(libs.minestom)
     testImplementation(libs.junit.api)
-    testImplementation(libs.mockitoCore)
-    testImplementation(libs.mockitoJunit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit)
     testRuntimeOnly(libs.junit.engine)
 }
 
