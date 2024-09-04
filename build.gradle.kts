@@ -10,8 +10,9 @@ val baseVersion = "1.0.0-SNAPSHOT"
 val sonarKey = "dungeon_projects_kali_AYMuSYZaWr3PlWoLMa-G"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 repositories {
@@ -64,7 +65,7 @@ dependencies {
 tasks {
     compileJava {
         options.encoding = "UTF-8"
-        options.release.set(17)
+        options.release.set(21)
     }
 
     jacocoTestReport {
