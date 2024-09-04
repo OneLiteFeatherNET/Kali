@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.sonarqube)
     jacoco
     alias(libs.plugins.shadow)
+    alias(libs.plugins.publishdata)
 }
 
 group = "net.theevilreaper.kali"
-val baseVersion = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 java {
     toolchain {
@@ -52,14 +53,10 @@ tasks {
             events("passed", "skipped", "failed")
         }
     }
-
-    getByName("sonar") {
-        dependsOn(rootProject.tasks.test)
-    }
 }
 
-version = if (System.getenv().containsKey("CI")) {
-    "${baseVersion}+${System.getenv("CI_COMMIT_SHORT_SHA")}"
-} else {
-    baseVersion
+publishData {
+    addBuildData()
+    useGitlabReposForProject("", "")
+    publishTask("jar")
 }

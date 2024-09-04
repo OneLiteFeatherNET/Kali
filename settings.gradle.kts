@@ -1,6 +1,12 @@
 rootProject.name = "Kali"
 
 dependencyResolutionManagement {
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            maven("https://eldonexus.de/repository/maven-public/")
+        }
+    }
     repositories {
         if (System.getenv("CI") != null) {
             repositoriesMode = RepositoriesMode.PREFER_SETTINGS
@@ -44,6 +50,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
+            version("publishdata", "1.4.0")
             library("minestom", "net.onelitefeather.microtus", "Microtus").version("1.4.2")
             library("minestom-test", "net.onelitefeather.microtus.testing", "testing").version("1.4.2")
             library("adventure.minimessage", "net.kyori", "adventure-text-minimessage").version("4.14.0")
@@ -55,7 +62,9 @@ dependencyResolutionManagement {
             library("canis", "com.github.theEvilReaper", "Canis").version("master-SNAPSHOT")
             library("mini", "net.kyori", "adventure-text-minimessage").version("4.14.0")
             library("morphia", "dev.morphia.morphia", "morphia-core").version("2.2.8")
+
             plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
+            plugin("publishdata", "de.chojo.publishdata").versionRef("publishdata")
         }
     }
 }
