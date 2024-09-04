@@ -27,7 +27,7 @@ public class SearchInventory {
      */
     public SearchInventory() {
         this.builder = new GlobalInventoryBuilder(Component.text("Change filter"), InventoryType.CHEST_1_ROW);
-        var layout = new InventoryLayout(this.builder.getType());
+        var layout = InventoryLayout.fromType(this.builder.getType());
 
         var values = SearchOption.getValues();
 
@@ -51,12 +51,12 @@ public class SearchInventory {
      * Handles the click logic for the items in the inventory.
      * @param player the player who clicked
      * @param clickType the given {@link ClickType}
-     * @param slotID the involved slot as id
+     * @param slotId the involved slot as id
      * @param result the {@link InventoryConditionResult}
      */
-    private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleClick(@NotNull Player player, int slotId, @NotNull ClickType clickType,  @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         player.closeInventory();
-        MinecraftServer.getGlobalEventHandler().call(new PlayerSearchChangeEvent(player, slotID));
+        MinecraftServer.getGlobalEventHandler().call(new PlayerSearchChangeEvent(player, slotId));
     }
 }

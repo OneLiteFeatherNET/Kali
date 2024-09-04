@@ -28,6 +28,7 @@ import java.util.UUID;
  * The inventory is used to ask the player if he really wants to delete the floor or not.
  * If there is a confirmation to delete the floor. So this is deleted from the inventory and in the database.
  * The region files themselves will not be deleted. If the deletion is denied nothing further happens
+ *
  * @author theEvilReaper
  * @version 1.0.0
  * @since 1.0.0
@@ -43,12 +44,13 @@ public class DeleteInventory {
 
     /**
      * Creates a new instance from the delete inventory.
+     *
      * @param floorGetMethod the method reference to get a floor by its name
      */
     public DeleteInventory(@NotNull FloorGetMethod floorGetMethod, @NotNull Inventory reOpenInventory) {
         this.floorGetMethod = floorGetMethod;
         this.builder = new GlobalInventoryBuilder(DELETE_TITLE, InventoryType.CHEST_3_ROW);
-        var layout = new InventoryLayout(this.builder.getType());
+        var layout = InventoryLayout.fromType(this.builder.getType());
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
 
         layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(CONFIRM_COMPONENT), this::handleClick);
@@ -62,12 +64,13 @@ public class DeleteInventory {
 
     /**
      * Handles what happened when a player abort the deletion of a floor.
-     * @param player the player who is involved
+     *
+     * @param player    the player who is involved
      * @param clickType the clickType as {@link ClickType} reference
-     * @param slotID the involved slot
-     * @param result the result
+     * @param slotID    the involved slot
+     * @param result    the result
      */
-    private void handleAbortClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleAbortClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
         player.closeInventory();
@@ -76,12 +79,13 @@ public class DeleteInventory {
 
     /**
      * Handles the click logic to delete a floor.
-     * @param player the player who is involved
+     *
+     * @param player    the player who is involved
      * @param clickType the clickType as {@link ClickType} reference
-     * @param slotID the involved slot
-     * @param result the result
+     * @param slotID    the involved slot
+     * @param result    the result
      */
-    private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         var item = result.getClickedItem();
 
@@ -110,8 +114,9 @@ public class DeleteInventory {
 
     /**
      * Opens the inventory to delete the given floor.
+     *
      * @param player the player who should get the inventory
-     * @param floor the floor which is involved
+     * @param floor  the floor which is involved
      */
     public void openInventory(@NotNull Player player, @NotNull UUID floor) {
         player.setTag(Tags.FLOOR_ID, floor);

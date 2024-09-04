@@ -56,7 +56,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         this.builder = Floor.builder();
         this.inventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
 
-        var layout = new InventoryLayout(this.inventory.getType());
+        var layout = InventoryLayout.fromType(this.inventory.getType());
 
         layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
         layout.setItem(METADATA_NAME_SLOT, CHANGE_NAME, this::handleCreateClick);
@@ -78,7 +78,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         this.inventory.register();
 
         this.inputGui = new PersonalInventoryBuilder(SETUP_TITLE, InventoryType.ANVIL, owningPlayer);
-        var createLayout = new InventoryLayout(this.inputGui.getType());
+        var createLayout = InventoryLayout.fromType(this.inputGui.getType());
         createLayout.setNonClickItem(0, NAME_TAG);
         createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
@@ -96,20 +96,20 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         this.inputGui.register();
     }
 
-    private void handleInputClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+    private void handleInputClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         player.closeInventory();
         MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player));
     }
 
-    private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+    private void handleCreateClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         this.clickedSlot = slot;
         player.closeInventory();
         this.inputGui.open();
     }
 
-    private void handleCloseClick(@NotNull Player player, @NotNull ClickType clickType, int slot, @NotNull InventoryConditionResult result) {
+    private void handleCloseClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         player.setTag(CLOSE, 1);
         result.setCancel(true);
         player.closeInventory();

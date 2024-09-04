@@ -53,7 +53,7 @@ public class FloorInventory implements RoomSelectorCreator {
         this.consumer = consumer;
         this.mappedSelectors = new HashMap<>();
         this.inventoryBuilder = new GlobalInventoryBuilder(Component.text("Floors"), InventoryType.CHEST_6_ROW);
-        var layout = new InventoryLayout(this.inventoryBuilder.getType());
+        var layout = InventoryLayout.fromType(this.inventoryBuilder.getType());
 
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
         Items.setDecorationLine(layout, this.inventoryBuilder.getType());
@@ -63,12 +63,12 @@ public class FloorInventory implements RoomSelectorCreator {
         layout.setItem(49, ItemStack.builder(Material.DARK_OAK_SIGN).displayName(Component.text("Create floor", NamedTextColor.GREEN)).build(), this::handleCreateClick);
 
         this.inventoryBuilder.setDataLayoutFunction(inventoryLayout -> {
-            inventoryLayout = inventoryLayout == null ? new InventoryLayout(this.inventoryBuilder.getType()) : inventoryLayout;
+            inventoryLayout = inventoryLayout == null ? InventoryLayout.fromType(this.inventoryBuilder.getType()) : inventoryLayout;
             inventoryLayout.blank(blankSlots);
             var floors = floorProvider.getFloors();
             var iterator = floors.iterator();
             int counter = 0;
-            while(iterator.hasNext() && counter < this.blankSlots.length) {
+            while (iterator.hasNext() && counter < this.blankSlots.length) {
                 var floor = iterator.next();
                 inventoryLayout.setItem(this.blankSlots[counter], floor.getItemStack(), this::handleClick);
                 counter++;
@@ -91,14 +91,15 @@ public class FloorInventory implements RoomSelectorCreator {
 
     /**
      * Handles the click for the item which allows the creation of new floors.
-     * @param player the player who clicked on the item
+     *
+     * @param player    the player who clicked on the item
      * @param clickType the given {@link ClickType}
-     * @param slotID the slot id
-     * @param result the {@link InventoryConditionResult} from the click
+     * @param slotID    the slot id
+     * @param result    the {@link InventoryConditionResult} from the click
      */
-    private void handleCreateClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleCreateClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
-       // if (!player.hasPermission(Permissions.CREATE_FLOOR_PERMISSION)) return;
+        // if (!player.hasPermission(Permissions.CREATE_FLOOR_PERMISSION)) return;
         player.closeInventory();
         var inventory = this.floorCreateService.getCreateBuilder(player);
         inventory.open();
@@ -106,12 +107,13 @@ public class FloorInventory implements RoomSelectorCreator {
 
     /**
      * Handles the click logic for a floor item in the inventory.
-     * @param player the player who clicked on the item
+     *
+     * @param player    the player who clicked on the item
      * @param clickType the given {@link ClickType}
-     * @param slotID the slot id
-     * @param result the {@link InventoryConditionResult} from the click
+     * @param slotID    the slot id
+     * @param result    the {@link InventoryConditionResult} from the click
      */
-    private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
 
         var item = result.getClickedItem();
@@ -138,6 +140,7 @@ public class FloorInventory implements RoomSelectorCreator {
 
     /**
      * Opens the inventory for a given player.
+     *
      * @param player the player who should receive the inventory
      */
     public void open(@NotNull Player player) {
