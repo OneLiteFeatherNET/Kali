@@ -12,15 +12,7 @@ import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
-import net.minestom.server.event.player.PlayerChatEvent;
-import net.minestom.server.event.player.PlayerDeathEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
-import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.CancellableEvent;
 import net.minestom.server.extensions.Extension;
 import net.minestom.server.instance.AnvilLoader;
@@ -185,7 +177,7 @@ public class DungeonEditor extends Extension {
         Consumer<CancellableEvent> cancelConsumer = event -> event.setCancelled(true);
         var eventHandler = MinecraftServer.getGlobalEventHandler();
         if (created) {
-            eventHandler.addListener(PlayerLoginEvent.class, event -> event.setSpawningInstance(defaultInstance));
+            eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> event.setSpawningInstance(defaultInstance));
             LOGGER.info("Add own login listener");
         }
 

@@ -23,7 +23,7 @@ public class RegionInventory {
 
     public RegionInventory() {
         this.builder = new GlobalInventoryBuilder(Component.text("Create a region").color(TextColor.fromHexString("#E38421")), InventoryType.CHEST_6_ROW);
-        var layout = new InventoryLayout(builder.getType());
+        var layout = InventoryLayout.fromType(builder.getType());
 
         layout.setNonClickItems(LayoutCalculator.frame(0, layout.getContents().length - 1), Items.DECORATION);
 

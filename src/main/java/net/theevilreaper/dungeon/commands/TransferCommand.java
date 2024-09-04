@@ -51,7 +51,7 @@ public class TransferCommand extends Command {
         }
 
         String target = context.get(targetArgument);
-        var newOwner = MinecraftServer.getConnectionManager().findPlayer(target);
+        var newOwner = MinecraftServer.getConnectionManager().findOnlinePlayer(target);
 
         if (newOwner == null) {
             player.sendMessage(PLAYER_NOT_FOUND);

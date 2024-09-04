@@ -54,12 +54,12 @@ public class RoomSelector {
         this.floorDTO = floorDTO;
         this.inventoryBuilder = floorBuilder;
         this.builder = new GlobalInventoryBuilder(Component.text("Select the room to edit"), InventoryType.CHEST_6_ROW);
-        var layout = new InventoryLayout(this.builder.getType());
+        var layout = InventoryLayout.fromType(this.builder.getType());
 
         Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
 
-        layout.setItem(49, ItemStack.builder(Material.HOPPER).displayName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, clickType, i, inventoryConditionResult) -> {
+        layout.setItem(49, ItemStack.builder(Material.HOPPER).displayName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, i, clickType, inventoryConditionResult) -> {
             inventoryConditionResult.setCancel(true);
 
             if (clickType == ClickType.RIGHT_CLICK) {
@@ -95,7 +95,7 @@ public class RoomSelector {
     /**
      * Handles the internal click logic for each item in the inventory
      */
-    private void handleClick(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
 
         var clickedItem = result.getClickedItem();
@@ -130,7 +130,7 @@ public class RoomSelector {
         player.setInstance(editInstance, defaultPos);
     }
 
-    private void handleClose(@NotNull Player player, @NotNull ClickType clickType, int slotID, @NotNull InventoryConditionResult result) {
+    private void handleClose(@NotNull Player player, int slotId, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         this.callCloseEvent(player);
         player.closeInventory();
