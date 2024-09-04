@@ -7,7 +7,6 @@ plugins {
 
 group = "net.theevilreaper.kali"
 val baseVersion = "1.0.0-SNAPSHOT"
-val sonarKey = "dungeon_projects_kali_AYMuSYZaWr3PlWoLMa-G"
 
 java {
     toolchain {
@@ -56,13 +55,6 @@ tasks {
 
     getByName("sonar") {
         dependsOn(rootProject.tasks.test)
-    }
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", sonarKey)
-        property("sonar.qualitygate.wait", true)
     }
 }
 
