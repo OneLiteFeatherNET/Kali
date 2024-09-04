@@ -56,7 +56,6 @@ dependencyResolutionManagement {
             library("mini", "net.kyori", "adventure-text-minimessage").version("4.14.0")
             library("morphia", "dev.morphia.morphia", "morphia-core").version("2.2.8")
             plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
-            plugin("sonar", "org.sonarqube").version("4.0.0.2929")
         }
     }
 }
