@@ -20,7 +20,6 @@ import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import net.theevilreaper.dungeon.data.floor.FloorMetaDataSetter;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
-import net.theevilreaper.dungeon.util.Messages;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,15 +34,15 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
     private static final Component INV_TITLE = Component.text("Create floor");
     private static final Component SETUP_TITLE = Component.text("Enter a value");
     private static final ItemStack CHANGE_NAME = ItemStack.builder(Material.OAK_SIGN)
-            .displayName(Component.text("Change name")).build();
+            .customName(Component.text("Change name")).build();
     private static final ItemStack CHANGE_EXTERNAL = ItemStack.builder(Material.CRIMSON_SIGN)
-            .displayName(Component.text("Change external name")).build();
+            .customName(Component.text("Change external name")).build();
     private static final ItemStack CHANGE_ID = ItemStack.builder(Material.CLOCK)
-            .displayName(Component.text("Change id")).build();
+            .customName(Component.text("Change id")).build();
     private static final ItemStack CHANGE_ICON = ItemStack.builder(Material.LECTERN)
-            .displayName(Component.text("Change icon")).build();
+            .customName(Component.text("Change icon")).build();
     private static final ItemStack SAVE = ItemStack.builder(Material.GREEN_STAINED_GLASS_PANE)
-            .displayName(Component.text("Save", NamedTextColor.GREEN)).build();
+            .customName(Component.text("Save", NamedTextColor.GREEN)).build();
 
     private static final ItemStack NAME_TAG = ItemStack.builder(Material.NAME_TAG).build();
     private final PersonalInventoryBuilder inventory;
@@ -58,7 +57,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
 
         var layout = InventoryLayout.fromType(this.inventory.getType());
 
-        layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
+        layout.setItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
         layout.setItem(METADATA_NAME_SLOT, CHANGE_NAME, this::handleCreateClick);
         layout.setItem(METADATA_EXTERNAL_NAME_SLOT, CHANGE_EXTERNAL, this::handleCreateClick);
         layout.setItem(METADATA_ID_SLOT, CHANGE_ID, this::handleCreateClick);
@@ -79,7 +78,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
 
         this.inputGui = new PersonalInventoryBuilder(SETUP_TITLE, InventoryType.ANVIL, owningPlayer);
         var createLayout = InventoryLayout.fromType(this.inputGui.getType());
-        createLayout.setNonClickItem(0, NAME_TAG);
+        createLayout.setItem(0, NAME_TAG);
         createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {

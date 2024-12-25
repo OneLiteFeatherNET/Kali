@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 public enum SearchOption {
 
     ITEM(ItemStack.builder(Material.STICK)
-            .displayName(Component.text("Item Room"))
-            .meta(builder -> builder.setTag(Tags.ITEM_TAGS, (byte) 10))
+            .customName(Component.text("Item Room"))
+            .set(Tags.ITEM_TAGS, (byte) 10)
             .build()
     ),
     BOSS(ItemStack.builder(Material.DRAGON_HEAD)
-            .displayName(Component.text("Boss Room"))
-            .meta(builder -> builder.setTag(Tags.ITEM_TAGS, (byte) 11))
+            .customName(Component.text("Boss Room"))
+            .set(Tags.ITEM_TAGS, (byte) 11)
             .build()
     );
 

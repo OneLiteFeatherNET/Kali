@@ -51,10 +51,10 @@ public class DeleteInventory {
         this.floorGetMethod = floorGetMethod;
         this.builder = new GlobalInventoryBuilder(DELETE_TITLE, InventoryType.CHEST_3_ROW);
         var layout = InventoryLayout.fromType(this.builder.getType());
-        layout.setNonClickItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
+        layout.setItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
 
-        layout.setItem(12, ItemStack.builder(Material.LIME_DYE).displayName(CONFIRM_COMPONENT), this::handleClick);
-        layout.setItem(14, ItemStack.builder(Material.RED_DYE).displayName(ABORT_COMPONENT), this::handleAbortClick);
+        layout.setItem(12, ItemStack.builder(Material.LIME_DYE).customName(CONFIRM_COMPONENT), this::handleClick);
+        layout.setItem(14, ItemStack.builder(Material.RED_DYE).customName(ABORT_COMPONENT), this::handleAbortClick);
 
         this.builder.setLayout(layout);
 

@@ -59,7 +59,7 @@ public class RoomSelector {
         Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
 
-        layout.setItem(49, ItemStack.builder(Material.HOPPER).displayName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, i, clickType, inventoryConditionResult) -> {
+        layout.setItem(49, ItemStack.builder(Material.HOPPER).customName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, i, clickType, inventoryConditionResult) -> {
             inventoryConditionResult.setCancel(true);
 
             if (clickType == ClickType.RIGHT_CLICK) {
@@ -78,10 +78,10 @@ public class RoomSelector {
         var item = ItemStack.builder(Material.PAPER).build();
 
         for (int i = 0; i < 25; i++) {
-            layout.setNonClickItem(i, item);
+            layout.setItem(i, item);
         }
 
-        layout.setNonClickItem(20, ItemStack.builder(Material.DRAGON_HEAD).build());
+        layout.setItem(20, ItemStack.builder(Material.DRAGON_HEAD).build());
 
         this.builder.setCloseFunction(event -> event.setNewInventory(floorBuilder.getInventory()));
         this.builder.setLayout(layout);

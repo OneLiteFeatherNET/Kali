@@ -1,6 +1,5 @@
 plugins {
     java
-    alias(libs.plugins.sonarqube)
     jacoco
     alias(libs.plugins.shadow)
     alias(libs.plugins.publishdata)
@@ -16,16 +15,17 @@ java {
 }
 
 dependencies {
+    implementation(platform(libs.microtus.bom))
+    implementation(platform(libs.dungeon.bom))
     implementation(libs.mini)
     implementation(libs.morphia)
-    implementation(libs.canis)
 
     compileOnly(libs.aves)
     compileOnly(libs.minestom)
 
     testImplementation(libs.aves)
     testImplementation(libs.minestom)
-    testImplementation(libs.minestomTesting)
+    testImplementation(libs.minestom.test)
     testImplementation(libs.junitApi)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoJunit)

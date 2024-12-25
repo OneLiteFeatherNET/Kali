@@ -15,13 +15,9 @@ import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.CancellableEvent;
 import net.minestom.server.extensions.Extension;
-import net.minestom.server.instance.AnvilLoader;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.BlockManager;
-import net.theevilreaper.canis.BannerHandler;
-import net.theevilreaper.canis.BeaconHandler;
-import net.theevilreaper.canis.SignHandler;
-import net.theevilreaper.canis.SkullHandler;
 import net.theevilreaper.dungeon.commands.LockCommand;
 import net.theevilreaper.dungeon.commands.PositionCommand;
 import net.theevilreaper.dungeon.commands.ResetCommand;
@@ -42,7 +38,6 @@ import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
 import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
-import net.theevilreaper.dungeon.util.KaliDimension;
 import net.theevilreaper.dungeon.util.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +109,7 @@ public class DungeonEditor extends Extension {
         var created = false;
         if (MinecraftServer.getInstanceManager().getInstances().isEmpty()) {
             LOGGER.info("Found no existing instance. Creating a new instance");
-            this.defaultInstance = MinecraftServer.getInstanceManager().createInstanceContainer(KaliDimension.KALI_DIMENSION);
+            this.defaultInstance = MinecraftServer.getInstanceManager().createInstanceContainer();
             created = true;
         } else {
             LOGGER.info("Found existing instance. Fetching first instance");
@@ -164,10 +159,10 @@ public class DungeonEditor extends Extension {
      */
     private void registerBlockHandlers() {
         BlockManager blockManager = MinecraftServer.getBlockManager();
-        blockManager.registerHandler("minecraft:skull", SkullHandler::new);
+        /*blockManager.registerHandler("minecraft:skull", SkullHandler::new);
         blockManager.registerHandler("minecraft:sign", SignHandler::new);
         blockManager.registerHandler("minecraft:banner", BannerHandler::new);
-        blockManager.registerHandler("minecraft:beacon", BeaconHandler::new);
+        blockManager.registerHandler("minecraft:beacon", BeaconHandler::new);*/
     }
 
     /**
