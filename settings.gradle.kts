@@ -69,10 +69,9 @@ dependencyResolutionManagement {
             library("aves", "de.icevizion.lib", "aves").versionRef("aves")
             library("xerus", "net.theevilreaper.xerus", "xerus").versionRef("xerus")
 
-            library("adventure.minimessage", "net.kyori", "adventure-text-minimessage").version("4.14.0")
           //  library("canis", "com.github.theEvilReaper", "Canis").version("master-SNAPSHOT")
-            library("mini", "net.kyori", "adventure-text-minimessage").version("4.14.0")
-            library("morphia", "dev.morphia.morphia", "morphia-core").version("2.2.8")
+            library("mini", "net.kyori", "adventure-text-minimessage").version("4.17.0")
+            library("morphia", "dev.morphia.morphia", "morphia-core").version("2.4.14")
 
             plugin("shadow", "com.gradleup.shadow").versionRef("shadow")
             plugin("publishdata", "de.chojo.publishdata").versionRef("publishdata")

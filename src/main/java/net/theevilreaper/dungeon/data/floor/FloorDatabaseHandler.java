@@ -1,6 +1,6 @@
 package net.theevilreaper.dungeon.data.floor;
 
-import dev.morphia.query.experimental.updates.UpdateOperators;
+import dev.morphia.query.updates.UpdateOperators;
 import net.theevilreaper.dungeon.database.DatabaseEntity;
 import net.theevilreaper.dungeon.database.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
