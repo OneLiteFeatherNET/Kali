@@ -69,7 +69,7 @@ public class FloorDTO implements Floor {
     public @NotNull ItemStack getItemStack() {
         if (itemStack == null) {
             this.itemStack = ItemStack.of(material)
-                    .with(builder -> builder.displayName(Component.text(this.name, NamedTextColor.RED))
+                    .with(builder -> builder.customName(Component.text(this.name, NamedTextColor.RED))
                             .lore(Messages.FLOOR_LORE)
                             .set(Tags.FLOOR_ID, uuid));
         }

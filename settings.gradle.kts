@@ -51,19 +51,30 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             version("publishdata", "1.4.0")
-            library("minestom", "net.onelitefeather.microtus", "Microtus").version("1.4.2")
-            library("minestom-test", "net.onelitefeather.microtus.testing", "testing").version("1.4.2")
+            version("minestom", "1.5.0")
+            version("aves", "1.6.1")
+            version("xerus", "1.3.0-SNAPSHOT")
+            version("shadow", "8.3.0")
+
+            library("microtus.bom", "net.onelitefeather.microtus", "bom").versionRef("minestom")
+            library("dungeon.bom", "net.theevilreaper.dungeon.bom", "base").version("1.1.1")
+
+            library("minestom", "net.onelitefeather.microtus", "Microtus").withoutVersion()
+            library("minestom-test", "net.onelitefeather.microtus.testing", "testing").withoutVersion()
+            library("junit.api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
+            library("junit.engine", "org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+            library("mockito.core", "org.mockito", "mockito-core").withoutVersion()
+            library("mockito.junit", "org.mockito", "mockito-junit-jupiter").withoutVersion()
+
+            library("aves", "de.icevizion.lib", "aves").versionRef("aves")
+            library("xerus", "net.theevilreaper.xerus", "xerus").versionRef("xerus")
+
             library("adventure.minimessage", "net.kyori", "adventure-text-minimessage").version("4.14.0")
-            library("junit.api", "org.junit.jupiter", "junit-jupiter-api").version("5.10.0")
-            library("junit.engine", "org.junit.jupiter", "junit-jupiter-engine").version("5.10.0")
-            library("mockito.core", "org.mockito", "mockito-core").version("5.6.0")
-            library("mockito.junit", "org.mockito", "mockito-junit-jupiter").version("5.6.0")
-            library("aves", "de.icevizion.lib", "aves").version("1.5.2")
-            library("canis", "com.github.theEvilReaper", "Canis").version("master-SNAPSHOT")
+          //  library("canis", "com.github.theEvilReaper", "Canis").version("master-SNAPSHOT")
             library("mini", "net.kyori", "adventure-text-minimessage").version("4.14.0")
             library("morphia", "dev.morphia.morphia", "morphia-core").version("2.2.8")
 
-            plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
+            plugin("shadow", "com.gradleup.shadow").versionRef("shadow")
             plugin("publishdata", "de.chojo.publishdata").versionRef("publishdata")
         }
     }

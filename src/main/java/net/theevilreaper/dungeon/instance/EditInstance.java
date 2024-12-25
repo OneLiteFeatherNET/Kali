@@ -13,12 +13,13 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TimeUpdatePacket;
 import net.minestom.server.utils.PacketUtils;
-import net.theevilreaper.dungeon.util.KaliDimension;
+import net.minestom.server.world.DimensionType;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -59,7 +60,7 @@ public class EditInstance extends InstanceContainer {
     private final Consumer<EditInstance> containerConsumer;
 
     public EditInstance(@NotNull Consumer<EditInstance> containerConsumer) {
-        super(UUID.randomUUID(), KaliDimension.KALI_DIMENSION);
+        super(UUID.randomUUID(), DimensionType.OVERWORLD);
         this.bossBar = BossBar.bossBar(Component.empty(), BossBar.MAX_PROGRESS, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
         this.currentCounter = MAXIMUM_ALIVE;
         this.nextResetMessageTick = System.currentTimeMillis() + (SECONDS_AS_LONG * 1560);

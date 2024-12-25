@@ -15,12 +15,14 @@ java {
 }
 
 dependencies {
+    implementation(platform(libs.microtus.bom))
+    implementation(platform(libs.dungeon.bom))
     implementation(libs.mini)
     implementation(libs.morphia)
-    implementation(libs.canis)
 
     compileOnly(libs.aves)
     compileOnly(libs.minestom)
+
     testImplementation(libs.minestom.test)
     testImplementation(libs.minestom)
     testImplementation(libs.junit.api)

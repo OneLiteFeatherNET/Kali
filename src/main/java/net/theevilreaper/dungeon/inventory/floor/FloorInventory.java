@@ -10,6 +10,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
 import net.minestom.server.inventory.condition.InventoryConditionResult;
+import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.FloorProvider;
@@ -60,7 +61,7 @@ public class FloorInventory implements RoomSelectorCreator {
 
         this.blankSlots = LayoutCalculator.quad(InventoryType.CHEST_1_ROW.getSize(), InventoryType.CHEST_5_ROW.getSize() - 1);
 
-        layout.setItem(49, ItemStack.builder(Material.DARK_OAK_SIGN).displayName(Component.text("Create floor", NamedTextColor.GREEN)).build(), this::handleCreateClick);
+        layout.setItem(49, ItemStack.builder(Material.DARK_OAK_SIGN).customName(Component.text("Create floor", NamedTextColor.GREEN)).build(), this::handleCreateClick);
 
         this.inventoryBuilder.setDataLayoutFunction(inventoryLayout -> {
             inventoryLayout = inventoryLayout == null ? InventoryLayout.fromType(this.inventoryBuilder.getType()) : inventoryLayout;
@@ -119,7 +120,7 @@ public class FloorInventory implements RoomSelectorCreator {
         var item = result.getClickedItem();
 
 
-        if (clickType == ClickType.RIGHT_CLICK && /*player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION) &&*/ item.getDisplayName() != null) {
+        if (clickType == ClickType.RIGHT_CLICK && /*player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION) &&*/ item.get(ItemComponent.CUSTOM_NAME) != null) {
             deleteInventory.openInventory(player, item.getTag(Tags.FLOOR_ID));
             return;
         }

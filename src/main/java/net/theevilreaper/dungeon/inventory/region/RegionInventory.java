@@ -9,7 +9,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
 import net.minestom.server.inventory.condition.InventoryConditionResult;
-import net.minestom.server.item.ItemHideFlag;
+import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.instance.EditInstance;
@@ -25,7 +25,7 @@ public class RegionInventory {
         this.builder = new GlobalInventoryBuilder(Component.text("Create a region").color(TextColor.fromHexString("#E38421")), InventoryType.CHEST_6_ROW);
         var layout = InventoryLayout.fromType(builder.getType());
 
-        layout.setNonClickItems(LayoutCalculator.frame(0, layout.getContents().length - 1), Items.DECORATION);
+        layout.setItems(LayoutCalculator.frame(0, layout.getContents().length - 1), Items.DECORATION);
 
         int[] slots = LayoutCalculator.quad(10, 43);
 
@@ -44,7 +44,9 @@ public class RegionInventory {
      */
     @Contract("_, _ -> new")
     private @NotNull ItemStack getStack(@NotNull Material material, @NotNull Component displayName) {
-        return ItemStack.builder(material).displayName(displayName).meta(builder1 -> builder1.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES)).build();
+        return ItemStack.builder(material).customName(displayName)
+                //.set(ItemComponent.ENCHANTMENT_GLINT_OVERRIDE, false)
+                .build();
     }
 
     /**

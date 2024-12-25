@@ -6,7 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
-import net.minestom.server.item.ItemHideFlag;
+import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
@@ -23,20 +23,22 @@ public class Items {
     public static final byte REGION_ITEM = 0;
     public static final byte FLOOR_ITEM = 1;
     public static final ItemStack DECORATION = ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
-            .displayName(Component.empty()).build();
+            .customName(Component.empty()).build();
     public static final ItemStack BACK_SLOT = ItemStack.builder(Material.RED_STAINED_GLASS_PANE)
-            .displayName(Component.text("Back", NamedTextColor.RED)).build();
+            .customName(Component.text("Back", NamedTextColor.RED)).build();
     private static final byte DEFAULT_HELD_SLOT = (byte)4;
     private final ItemStack regionTool;
     private final ItemStack floorSelector;
 
     public Items() {
         this.regionTool = ItemStack.builder(Material.GOLDEN_AXE)
-                .displayName(Component.text("Regions", NamedTextColor.YELLOW))
-                .meta(builder -> builder.hideFlag(ItemHideFlag.HIDE_ATTRIBUTES).set(Tags.ITEM_TAGS, REGION_ITEM)).build();
+                .customName(Component.text("Regions", NamedTextColor.YELLOW))
+                .set(ItemComponent.HIDE_TOOLTIP)
+                .set(Tags.ITEM_TAGS, REGION_ITEM)
+                .build();
         this.floorSelector = ItemStack.builder(Material.CARTOGRAPHY_TABLE)
-                .displayName(Component.text("Floors", NamedTextColor.RED))
-                .meta(builder -> builder.setTag(Tags.ITEM_TAGS, FLOOR_ITEM))
+                .customName(Component.text("Floors", NamedTextColor.RED))
+                .set(Tags.ITEM_TAGS, FLOOR_ITEM)
                 .build();
     }
 
@@ -74,6 +76,6 @@ public class Items {
      */
     public static void setDecorationLine(@NotNull InventoryLayout layout, @NotNull InventoryType type) {
         //Check.argCondition(type.getSize() != layout.getSize(), "The given type size is higher then the size from the inventory");
-        layout.setNonClickItems(LayoutCalculator.fillRow(type), DECORATION);
+        layout.setItems(LayoutCalculator.fillRow(type), DECORATION);
     }
 }
