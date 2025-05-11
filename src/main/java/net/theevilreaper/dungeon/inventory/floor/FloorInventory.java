@@ -38,17 +38,14 @@ public class FloorInventory implements RoomSelectorCreator {
     private final Map<ItemStack, RoomSelector> mappedSelectors;
     private final EditInstanceManager editInstanceManager;
     private final FloorCreateService floorCreateService;
-    private final LocationProvider locationProvider;
     private final Consumer<EditInstance> consumer;
     private final int[] blankSlots;
 
     public FloorInventory(@NotNull EditInstanceManager editInstanceManager,
-                          @NotNull LocationProvider locationProvider,
                           @NotNull FloorProvider floorProvider,
                           @NotNull FloorCreateService floorCreateService,
                           @NotNull Consumer<EditInstance> consumer) {
         this.editInstanceManager = editInstanceManager;
-        this.locationProvider = locationProvider;
         this.floorProvider = floorProvider;
         this.floorCreateService = floorCreateService;
         this.consumer = consumer;
@@ -133,7 +130,7 @@ public class FloorInventory implements RoomSelectorCreator {
                 return;
             }
 
-            var inventory = this.mappedSelectors.computeIfAbsent(item, stack -> getSelector(editInstanceManager, locationProvider, inventoryBuilder, floor, consumer));
+            var inventory = this.mappedSelectors.computeIfAbsent(item, stack -> getSelector(editInstanceManager, inventoryBuilder, floor, consumer));
             player.closeInventory();
             inventory.open(player);
         }

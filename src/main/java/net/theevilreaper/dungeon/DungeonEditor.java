@@ -1,9 +1,7 @@
 package net.theevilreaper.dungeon;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.theevilreaper.aves.file.GsonFileHandler;
+import com.google.gson.stream.JsonReader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
@@ -14,9 +12,9 @@ import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.CancellableEvent;
-import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.BlockManager;
+import net.theevilreaper.aves.map.MapProvider;
+import net.theevilreaper.aves.util.functional.PlayerConsumer;
 import net.theevilreaper.dungeon.commands.LockCommand;
 import net.theevilreaper.dungeon.commands.PositionCommand;
 import net.theevilreaper.dungeon.commands.ResetCommand;
@@ -33,11 +31,13 @@ import net.theevilreaper.dungeon.inventory.floor.FloorInventory;
 import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
 import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
+import net.theevilreaper.dungeon.listener.configuration.AsyncPlayerConfigurationListener;
+import net.theevilreaper.dungeon.map.EditorMapProvider;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
-import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
 import net.theevilreaper.dungeon.util.Messages;
+import net.theevilreaper.kali.common.gson.GsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,19 +56,15 @@ public class DungeonEditor {
 
     private static final String DATABASE_FILE = "database.json";
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    public static final Gson GSON = new GsonBuilder().create();
     private static final Logger LOGGER = LoggerFactory.getLogger(DungeonEditor.class);
-    public static final Path ROOT_PATH = Paths.get("");
     private FloorProvider floorProvider;
     private FloorInventory floorInventory;
     private final EditInstanceManager editInstanceManager;
     private final Items items;
-    private final LocationProvider locationProvider;
     private final RegionInventory regionInventory;
     private final SidebarViewer sidebarViewer;
+    private final MapProvider mapProvider;
     private MongoDatabase mongoDatabase;
-
-    private Instance defaultInstance;
 
     private final Consumer<EditInstance> containerConsumer;
 
@@ -77,13 +73,12 @@ public class DungeonEditor {
     public DungeonEditor() {
         this.editInstanceManager = new EditInstanceManager();
         this.items = new Items();
-        this.locationProvider = new LocationProvider(ROOT_PATH);
-        this.locationProvider.load();
+        this.mapProvider = new EditorMapProvider();
         this.containerConsumer = instanceContainer -> {
             instanceContainer.setLocked(true);
             if (!instanceContainer.getPlayers().isEmpty()) {
                 for (Player player : instanceContainer.getPlayers()) {
-                    player.setInstance(defaultInstance, locationProvider.getSpawnPos());
+                    this.mapProvider.teleportToSpawn(player, true);
                     items.setFloorItem(player);
                 }
             }
@@ -98,30 +93,27 @@ public class DungeonEditor {
 
     public void initialize() {
         this.initDirectories();
-        var jsonObject = new GsonFileHandler(GSON)
-                .load(Paths.get("").resolve(DATABASE_FILE), JsonObject.class);
-        jsonObject.ifPresent(object -> this.mongoDatabase = new MongoDatabase(jsonObject.get()));
+        JsonObject databaseObject = null;
+
+        try (JsonReader reader = new JsonReader(Files.newBufferedReader(Paths.get("").resolve(DATABASE_FILE)))) {
+            databaseObject = GsonUtil.DEFAULT_GSON.fromJson(reader, JsonObject.class);
+        } catch (IOException e) {
+            LOGGER.error("Failed to read the database file", e);
+        }
+
+        if (databaseObject != null) {
+            this.mongoDatabase = new MongoDatabase(databaseObject);
+        } else {
+            LOGGER.error("Failed to read the database file. The editor will not work without a database.");
+            return;
+        }
         this.floorProvider = new FloorProvider(mongoDatabase);
         this.floorCreateService = new FloorCreateService();
-        this.floorInventory = new FloorInventory(editInstanceManager, locationProvider, floorProvider, floorCreateService, containerConsumer);
-        var created = false;
-        if (MinecraftServer.getInstanceManager().getInstances().isEmpty()) {
-            LOGGER.info("Found no existing instance. Creating a new instance");
-            this.defaultInstance = MinecraftServer.getInstanceManager().createInstanceContainer();
-            created = true;
-        } else {
-            LOGGER.info("Found existing instance. Fetching first instance");
-            this.defaultInstance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
-        }
-        this.defaultInstance.setTime(6_000);
-        this.defaultInstance.setTimeRate(0);
+        this.floorInventory = new FloorInventory(editInstanceManager, floorProvider, floorCreateService, containerConsumer);
+        this.registerEvents();
         this.registerCommands();
-        this.registerEvents(created);
         this.registerBlockHandlers();
         LOGGER.info("Successfully loaded the editor extension for the dungeon");
-
-        var loader = new AnvilLoader("world");
-        loader.loadInstance(this.defaultInstance);
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(this::terminate);
     }
@@ -154,9 +146,6 @@ public class DungeonEditor {
         }
     }
 
-    /**
-     * Registers some handlers for some blocks.
-     */
     private void registerBlockHandlers() {
         BlockManager blockManager = MinecraftServer.getBlockManager();
         /*blockManager.registerHandler("minecraft:skull", SkullHandler::new);
@@ -168,27 +157,30 @@ public class DungeonEditor {
     /**
      * Registers some listener as global listener into the server event node.
      */
-    private void registerEvents(boolean created) {
+    private void registerEvents() {
         Consumer<CancellableEvent> cancelConsumer = event -> event.setCancelled(true);
-        var eventHandler = MinecraftServer.getGlobalEventHandler();
-        if (created) {
-            eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> event.setSpawningInstance(defaultInstance));
-            LOGGER.info("Add own login listener");
-        }
+        var node = MinecraftServer.getGlobalEventHandler();
+        node.addListener(AsyncPlayerConfigurationEvent.class, new AsyncPlayerConfigurationListener(
+                this.mapProvider.getActiveInstance()
+        ));
 
-        eventHandler.addListener(PlayerSpawnEvent.class, new PlayerSpawnListener(locationProvider, sidebarViewer, items));
-        eventHandler.addListener(PlayerBlockBreakEvent.class, new BlockBreakListener(regionInventory));
-        eventHandler.addListener(PlayerChatEvent.class, new PlayerChatListener());
-        eventHandler.addListener(PlayerBlockPlaceEvent.class, cancelConsumer::accept);
+        PlayerConsumer teleportToSpawn = player -> {
+            this.mapProvider.teleportToSpawn(player, true);
+        };
 
-        eventHandler.addListener(AddEntityToInstanceEvent.class, event -> {
+        node.addListener(PlayerSpawnEvent.class, new PlayerSpawnListener(teleportToSpawn, sidebarViewer, items));
+        node.addListener(PlayerBlockBreakEvent.class, new BlockBreakListener(regionInventory));
+        node.addListener(PlayerChatEvent.class, new PlayerChatListener());
+        node.addListener(PlayerBlockPlaceEvent.class, cancelConsumer::accept);
+
+        node.addListener(AddEntityToInstanceEvent.class, event -> {
            if (event.getInstance() instanceof EditInstance editInstance && event.getEntity() instanceof Player player) {
                editInstance.add(player);
                this.items.setEditItems(player);
            }
         });
 
-        eventHandler.addListener(RemoveEntityFromInstanceEvent.class, event -> {
+        node.addListener(RemoveEntityFromInstanceEvent.class, event -> {
             if (event.getInstance() instanceof EditInstance editInstance && event.getEntity() instanceof Player player) {
                 editInstance.remove(player);
                 player.getInventory().clear();
@@ -196,14 +188,14 @@ public class DungeonEditor {
             }
         });
 
-        eventHandler.addListener(ItemDropEvent.class, cancelConsumer::accept);
-        eventHandler.addListener(PickupItemEvent.class, cancelConsumer::accept);
-        eventHandler.addListener(PlayerDeathEvent.class, event -> event.setChatMessage(Component.empty()));
-        eventHandler.addListener(PlayerDisconnectEvent.class, new PlayerDisconnectListener(this.sidebarViewer,this.floorCreateService));
-        eventHandler.addListener(PlayerUseItemEvent.class, new ItemListener(floorInventory, locationProvider, defaultInstance));
-        eventHandler.addListener(PlayerBlockInteractEvent.class, new BlockInteractListener(regionInventory));
+        node.addListener(ItemDropEvent.class, cancelConsumer::accept);
+        node.addListener(PickupItemEvent.class, cancelConsumer::accept);
+        node.addListener(PlayerDeathEvent.class, event -> event.setChatMessage(Component.empty()));
+        node.addListener(PlayerDisconnectEvent.class, new PlayerDisconnectListener(this.sidebarViewer,this.floorCreateService));
+        node.addListener(PlayerUseItemEvent.class, new ItemListener(floorInventory, teleportToSpawn));
+        node.addListener(PlayerBlockInteractEvent.class, new BlockInteractListener(regionInventory));
 
-        eventHandler.addListener(FloorCreateEvent.class, event -> {
+        node.addListener(FloorCreateEvent.class, event -> {
             if (!event.getFloor().hasName()) {
                 event.getPlayer().sendMessage(Messages.ABORT_FLOOR_CREATION);
                 return;
@@ -212,12 +204,12 @@ public class DungeonEditor {
             this.floorInventory.updateInventoryLayout();
         });
 
-        eventHandler.addListener(FloorRemoveEvent.class, floorRemoveEvent -> {
+        node.addListener(FloorRemoveEvent.class, floorRemoveEvent -> {
             this.floorProvider.removeFloor(floorRemoveEvent.getFloor());
             this.floorInventory.updateInventoryLayout();
         });
 
-        eventHandler.addListener(PlayerSearchChangeEvent.class, new SearchChangeListener());
+        node.addListener(PlayerSearchChangeEvent.class, new SearchChangeListener());
     }
 
     /**
@@ -230,6 +222,6 @@ public class DungeonEditor {
         commandManager.register(new LockCommand());
         commandManager.register(new TestCommand(regionInventory));
         commandManager.register(new ResetCommand());
-        commandManager.register(new PositionCommand(locationProvider));
+        commandManager.register(new PositionCommand(this.mapProvider));
     }
 }
