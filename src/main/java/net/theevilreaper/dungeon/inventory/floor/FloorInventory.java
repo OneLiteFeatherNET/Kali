@@ -5,7 +5,6 @@ import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
@@ -20,7 +19,6 @@ import net.theevilreaper.dungeon.inventory.DeleteInventory;
 import net.theevilreaper.dungeon.inventory.RoomSelector;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
 import net.theevilreaper.dungeon.util.Items;
-import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
