@@ -2,7 +2,6 @@ package net.theevilreaper.dungeon;
 
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -56,7 +55,6 @@ import java.util.function.Consumer;
 public class DungeonEditor implements ListenerHandling {
 
     private static final String DATABASE_FILE = "database.json";
-    public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final Logger LOGGER = LoggerFactory.getLogger(DungeonEditor.class);
     private FloorProvider floorProvider;
     private FloorInventory floorInventory;

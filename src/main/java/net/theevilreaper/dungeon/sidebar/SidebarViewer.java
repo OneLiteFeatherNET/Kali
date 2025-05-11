@@ -10,6 +10,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import net.minestom.server.scoreboard.TeamManager;
 import net.theevilreaper.dungeon.DungeonEditor;
+import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -29,11 +30,11 @@ public class SidebarViewer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SidebarViewer.class);
     private static final TeamManager TEAM_MANAGER = MinecraftServer.getTeamManager();
     private static final Component ARROW_COMPONENT = Component.text(" ➟ ", NamedTextColor.GRAY);
-    private static final Component TAB_HEADER = DungeonEditor.MINI_MESSAGE
-            .deserialize("<color:#66ff66><bold>┏                                              <color:#ff6600><bold>┒\n")
-            .append(Component.text("» ").style(Style.style(NamedTextColor.DARK_GRAY, TextDecoration.BOLD)))
-            .append(DungeonEditor.MINI_MESSAGE.deserialize("Dungeon Editor"))
-            .append(Component.text(" «").style(Style.style(NamedTextColor.DARK_GRAY, TextDecoration.BOLD))).append(Component.text("\n"));
+    private static final Component TAB_HEADER =
+            Messages.withMini("<color:#66ff66><bold>┏                                              <color:#ff6600><bold>┒\n")
+                    .append(Component.text("» ").style(Style.style(NamedTextColor.DARK_GRAY, TextDecoration.BOLD)))
+                    .append(Component.text("Dungeon Editor"))
+                    .append(Component.text(" «").style(Style.style(NamedTextColor.DARK_GRAY, TextDecoration.BOLD))).append(Component.text("\n"));
     private static final Component TAB_FOOTER = Component.text("\n")
             .append(Component.text("Eat", NamedTextColor.YELLOW)
                     .append(ARROW_COMPONENT)
@@ -42,12 +43,14 @@ public class SidebarViewer {
                     .append(Component.text("rave", NamedTextColor.WHITE))
                     .append(ARROW_COMPONENT)
                     .append(Component.text("repeat", NamedTextColor.RED))
-            ).append(Component.text("\n")).append(DungeonEditor.MINI_MESSAGE.deserialize("<color:#ff6600><bold>┖                                              <color:#66ff66><bold>┛"));
+            ).append(Component.text("\n"))
+            .append(Messages.withMini(("<color:#ff6600><bold>┖                                              <color:#66ff66><bold>┛")));
 
     @Deprecated(forRemoval = true)
     private static final UUID REAPER_UUID = UUID.fromString("6e2f3944-96d2-4e01-9056-dcab7f3937a4");
     @Deprecated(forRemoval = true)
     private static final UUID SEELE_UUID = UUID.fromString("e1dff87a-1059-47f1-bc7d-533f072bf8c7");
+
     public SidebarViewer() {
         this.initTeams();
     }
