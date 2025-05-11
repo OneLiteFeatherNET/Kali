@@ -36,8 +36,8 @@ public class EditInstanceManager {
      * @param editInstance the instance to add
      */
     public void add(@NotNull EditInstance editInstance, @NotNull ItemStack stack) {
-        this.editInstanceMap.putIfAbsent(editInstance.getUniqueId(), editInstance);
-        this.stackToUUID.putIfAbsent(stack, editInstance.getUniqueId());
+        this.editInstanceMap.putIfAbsent(editInstance.getUuid(), editInstance);
+        this.stackToUUID.putIfAbsent(stack, editInstance.getUuid());
     }
 
     /**
@@ -47,7 +47,7 @@ public class EditInstanceManager {
      */
     @Nullable
     public EditInstance remove(@NotNull UUID uuid) {
-        var instance = editInstanceMap.remove(uuid);
+        EditInstance instance = editInstanceMap.remove(uuid);
 
         if (instance == null) return null;
 
@@ -55,24 +55,12 @@ public class EditInstanceManager {
         return instance;
     }
 
-    private boolean canRemove(@NotNull UUID uuid) {
-        if (this.stackToUUID.isEmpty()) return false;
-
-        for (var entry : this.stackToUUID.entrySet()) {
-            if (entry.getValue().equals(uuid)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Unregisters a given {@link EditInstance} from the given cache and {@link InstanceManager}.
      * @param editInstance the instance to unregister
      */
     public void remove(@NotNull EditInstance editInstance) {
-        if (this.editInstanceMap.remove(editInstance.getUniqueId()) != null) {
+        if (this.editInstanceMap.remove(editInstance.getUuid()) != null) {
             INSTANCE_MANAGER.unregisterInstance(editInstance);
         }
     }
