@@ -63,7 +63,7 @@ public class TransferCommand extends Command {
             return;
         }
 
-        if (!newOwner.getInstance().getUniqueId().equals(editInstance.getUniqueId())) {
+        if (!newOwner.getInstance().getUuid().equals(editInstance.getUuid())) {
             player.sendMessage(NOT_SAME_EDITOR_INSTANCE);
             return;
         }
