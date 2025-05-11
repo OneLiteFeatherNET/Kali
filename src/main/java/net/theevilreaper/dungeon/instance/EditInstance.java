@@ -74,8 +74,8 @@ public class EditInstance extends InstanceContainer {
 
         if (getTime() > MAX_TIME) {
             setTime(START_TIME);
-            // TODO: Fix me
-            // PacketUtils.sendGroupedPacket(this.getPlayers(), new TimeUpdatePacket(getWorldAge(), getTime()));
+            TimeUpdatePacket timeUpdatePacket = new TimeUpdatePacket(getWorldAge(), getTime(), false);
+            getPlayers().forEach(player -> player.sendPacket(timeUpdatePacket));
         }
 
         var timestamp = System.currentTimeMillis();
