@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.publishdata)
 }
 
-group = "net.theevilreaper.kali"
-version = "1.0.0"
+group = "net.theevilreaper"
+version = "0.1.0"
 
 java {
     toolchain {
@@ -15,22 +15,24 @@ java {
 }
 
 dependencies {
-    implementation(platform(libs.microtus.bom))
-    implementation(platform(libs.dungeon.bom))
-    implementation(libs.mini)
+    implementation(platform(libs.mycelium.bom))
+    implementation(platform(libs.aonyx.bom))
+    implementation(libs.adventure.minimessage)
+
     implementation(libs.morphia)
 
     compileOnly(libs.aves)
     compileOnly(libs.minestom)
 
+    testImplementation(libs.cyano)
     testImplementation(libs.aves)
     testImplementation(libs.minestom)
-    testImplementation(libs.minestom.test)
-    testImplementation(libs.junitApi)
-    testImplementation(libs.mockitoCore)
-    testImplementation(libs.mockitoJunit)
-
-    testRuntimeOnly(libs.junitEngine)
+    testImplementation(libs.junit.api)
+    testImplementation(libs.junit.params)
+    testImplementation(libs.junit.platform.launcher)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit)
+    testRuntimeOnly(libs.junit.engine)
 }
 
 tasks {
@@ -47,6 +49,7 @@ tasks {
     }
 
     test {
+        jvmArgs("-Dminestom.inside-test=true")
         finalizedBy(rootProject.tasks.jacocoTestReport)
         useJUnitPlatform()
         testLogging {
