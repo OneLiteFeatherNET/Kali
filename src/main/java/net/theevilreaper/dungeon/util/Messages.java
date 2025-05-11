@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.minestom.server.coordinate.Point;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -104,5 +105,40 @@ public final class Messages {
     @Contract("_ -> new")
     public static @NotNull Component transformPos(@NotNull Point pos) {
         return Component.text("(" + pos.blockX() + ", " + pos.blockX() + ", " + pos.blockZ() + ")", NamedTextColor.GRAY);
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component withPrefix(@NotNull String component) {
+        return PREFIX.append(MINI_MESSAGE.deserialize(component));
+    }
+
+    @Contract(value = "_, _ -> new", pure = true)
+    public static @NotNull Component withPrefix(@NotNull String component, @NotNull TagResolver... resolvers) {
+        return PREFIX.append(MINI_MESSAGE.deserialize(component, resolvers));
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component withPrefix(@NotNull Component component) {
+        return PREFIX.append(component);
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component withMini(@NotNull String text) {
+        return MiniMessage.miniMessage().deserialize(text);
+    }
+
+    @Contract(value = "_, _ -> new", pure = true)
+    public static @NotNull Component withMini(@NotNull String text, @NotNull TagResolver... resolvers) {
+        return MINI_MESSAGE.deserialize(text, resolvers);
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component withMiniPrefix(@NotNull String text) {
+        return PREFIX.append(MINI_MESSAGE.deserialize(text));
+    }
+
+    @Contract(value = "_, _ -> new", pure = true)
+    public static @NotNull Component withMiniPrefix(@NotNull String text, @NotNull TagResolver... resolvers) {
+        return PREFIX.append(MINI_MESSAGE.deserialize(text, resolvers));
     }
 }
