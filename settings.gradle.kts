@@ -59,3 +59,5 @@ dependencyResolutionManagement {
         }
     }
 }
+
+include("common")
