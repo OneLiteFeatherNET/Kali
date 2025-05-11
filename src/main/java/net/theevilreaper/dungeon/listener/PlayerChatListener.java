@@ -21,7 +21,7 @@ public class PlayerChatListener implements Consumer<PlayerChatEvent> {
     private static final Component CHAT_SEPARATOR = Component.space().append(Component.text("»", NamedTextColor.GRAY).append(Component.space()));
 
     private final Function<PlayerChatEvent, Component> chatFunction = event ->
-            event.getPlayer().getDisplayName().append(CHAT_SEPARATOR).append(Component.text(event.getMessage(), NamedTextColor.WHITE));
+            event.getPlayer().getDisplayName().append(CHAT_SEPARATOR).append(Component.text(event.getRawMessage(), NamedTextColor.WHITE));
 
     /**
      * Applies the custom chat function to the event
@@ -29,6 +29,6 @@ public class PlayerChatListener implements Consumer<PlayerChatEvent> {
      */
     @Override
     public void accept(@NotNull PlayerChatEvent event) {
-        event.setChatFormat(chatFunction);
+        event.setFormattedMessage(chatFunction.apply(event));
     }
 }

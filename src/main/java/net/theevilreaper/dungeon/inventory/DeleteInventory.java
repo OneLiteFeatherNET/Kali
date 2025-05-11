@@ -1,8 +1,8 @@
 package net.theevilreaper.dungeon.inventory;
 
-import de.icevizion.aves.inventory.GlobalInventoryBuilder;
-import de.icevizion.aves.inventory.InventoryLayout;
-import de.icevizion.aves.inventory.util.LayoutCalculator;
+import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -72,7 +72,7 @@ public class DeleteInventory {
      */
     private void handleAbortClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
-        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player));
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player, false));
         player.closeInventory();
         player.removeTag(Tags.FLOOR_ID);
     }
@@ -91,7 +91,7 @@ public class DeleteInventory {
 
         if (item.isAir()) return;
 
-        var event = new InventoryCloseEvent(player.getOpenInventory(), player);
+        var event = new InventoryCloseEvent(player.getOpenInventory(), player, false);
 
         if (item.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(Tags.FLOOR_ID);

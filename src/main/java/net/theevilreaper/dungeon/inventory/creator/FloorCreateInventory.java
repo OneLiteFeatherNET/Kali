@@ -1,8 +1,8 @@
 package net.theevilreaper.dungeon.inventory.creator;
 
-import de.icevizion.aves.inventory.InventoryLayout;
-import de.icevizion.aves.inventory.PersonalInventoryBuilder;
-import de.icevizion.aves.inventory.util.LayoutCalculator;
+import net.theevilreaper.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.PersonalInventoryBuilder;
+import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -98,7 +98,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
     private void handleInputClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
         result.setCancel(true);
         player.closeInventory();
-        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player));
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player, false));
     }
 
     private void handleCreateClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
@@ -112,7 +112,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         player.setTag(CLOSE, 1);
         result.setCancel(true);
         player.closeInventory();
-        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player));
+        MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player, false));
     }
 
     public void unregister() {

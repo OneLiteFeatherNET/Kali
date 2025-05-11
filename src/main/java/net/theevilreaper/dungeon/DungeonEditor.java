@@ -3,7 +3,7 @@ package net.theevilreaper.dungeon;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import de.icevizion.aves.file.GsonFileHandler;
+import net.theevilreaper.aves.file.GsonFileHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
@@ -14,7 +14,6 @@ import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.event.trait.CancellableEvent;
-import net.minestom.server.extensions.Extension;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.BlockManager;
@@ -53,7 +52,7 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public class DungeonEditor extends Extension {
+public class DungeonEditor {
 
     private static final String DATABASE_FILE = "database.json";
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
@@ -97,11 +96,10 @@ public class DungeonEditor extends Extension {
         this.sidebarViewer = new SidebarViewer();
     }
 
-    @Override
     public void initialize() {
         this.initDirectories();
         var jsonObject = new GsonFileHandler(GSON)
-                .load(getDataDirectory().resolve(DATABASE_FILE), JsonObject.class);
+                .load(Paths.get("").resolve(DATABASE_FILE), JsonObject.class);
         jsonObject.ifPresent(object -> this.mongoDatabase = new MongoDatabase(jsonObject.get()));
         this.floorProvider = new FloorProvider(mongoDatabase);
         this.floorCreateService = new FloorCreateService();
@@ -124,9 +122,10 @@ public class DungeonEditor extends Extension {
 
         var loader = new AnvilLoader("world");
         loader.loadInstance(this.defaultInstance);
+
+        MinecraftServer.getSchedulerManager().buildShutdownTask(this::terminate);
     }
 
-    @Override
     public void terminate() {
         if (this.mongoDatabase != null) {
             this.mongoDatabase.disconnect();
@@ -135,15 +134,16 @@ public class DungeonEditor extends Extension {
     }
 
     private void initDirectories() {
-        if (!Files.exists(getDataDirectory())) {
+        Path path = Paths.get("");
+        if (!Files.exists(path)) {
             try {
-                Files.createDirectories(getDataDirectory());
+                Files.createDirectories(path);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
         }
 
-        var roomsFolder = getDataDirectory().resolve("rooms");
+        var roomsFolder = path.resolve("rooms");
 
         if (!Files.exists(roomsFolder)) {
             try {

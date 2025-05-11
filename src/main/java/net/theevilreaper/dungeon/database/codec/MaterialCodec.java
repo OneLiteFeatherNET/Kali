@@ -1,5 +1,6 @@
 package net.theevilreaper.dungeon.database.codec;
 
+import net.kyori.adventure.key.Key;
 import net.minestom.server.item.Material;
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
@@ -24,7 +25,7 @@ public class MaterialCodec implements Codec<Material> {
      */
     @Override
     public Material decode(@NotNull BsonReader reader, DecoderContext decoderContext) {
-        return Material.fromNamespaceId(reader.readString());
+        return Material.fromKey(Key.key(reader.readString()));
     }
 
     /**

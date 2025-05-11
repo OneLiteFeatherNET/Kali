@@ -1,6 +1,6 @@
 package net.theevilreaper.dungeon.listener;
 
-import de.icevizion.aves.util.Broadcaster;
+import net.theevilreaper.aves.util.Broadcaster;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.item.ItemComponent;
 import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
