@@ -1,8 +1,8 @@
 package net.theevilreaper.dungeon.inventory;
 
-import de.icevizion.aves.inventory.GlobalInventoryBuilder;
-import de.icevizion.aves.inventory.InventoryBuilder;
-import de.icevizion.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -139,6 +139,6 @@ public class RoomSelector {
 
     private void callCloseEvent(@NotNull Player player) {
         MinecraftServer.getGlobalEventHandler().call(
-                new InventoryCloseEvent(player.getOpenInventory(), player));
+                new InventoryCloseEvent(player.getOpenInventory(), player, false));
     }
 }

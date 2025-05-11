@@ -1,8 +1,8 @@
 package net.theevilreaper.dungeon.inventory.floor;
 
-import de.icevizion.aves.inventory.GlobalInventoryBuilder;
-import de.icevizion.aves.inventory.InventoryLayout;
-import de.icevizion.aves.inventory.util.LayoutCalculator;
+import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;

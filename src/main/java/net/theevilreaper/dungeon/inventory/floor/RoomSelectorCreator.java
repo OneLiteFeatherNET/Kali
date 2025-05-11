@@ -1,6 +1,6 @@
 package net.theevilreaper.dungeon.inventory.floor;
 
-import de.icevizion.aves.inventory.InventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryBuilder;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;

@@ -2,6 +2,7 @@ package net.theevilreaper.dungeon.inventory.creator;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.network.packet.client.play.ClientNameItemPacket;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +65,7 @@ public class FloorCreateService {
      * @return True if the open inventory is an anvil gui otherwise false
      */
     private boolean isAnvilGui(@NotNull Player player) {
-        return player.getOpenInventory() != null && player.getOpenInventory().getInventoryType() == InventoryType.ANVIL;
+        Inventory inventory = ((Inventory) player.getOpenInventory());
+        return player.getOpenInventory() != null && inventory.getInventoryType() == InventoryType.ANVIL;
     }
 }
