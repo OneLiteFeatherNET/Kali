@@ -1,7 +1,7 @@
 package net.theevilreaper.dungeon.inventory.region.search;
 
-import de.icevizion.aves.inventory.GlobalInventoryBuilder;
-import de.icevizion.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
+import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;

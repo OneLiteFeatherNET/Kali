@@ -1,6 +1,7 @@
 package net.theevilreaper.dungeon.data.floor;
 
-import de.icevizion.aves.inventory.InventoryLayout;
+import net.kyori.adventure.key.Key;
+import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
@@ -52,7 +53,7 @@ public interface FloorMetaDataSetter {
     }
 
     default void setMaterial(@NotNull String input, @NotNull Floor.Builder builder, @NotNull Player player, @NotNull InventoryLayout layout) {
-        var material = Material.fromNamespaceId("minecraft:" + input);
+        var material = Material.fromKey(Key.key("minecraft:" + input));
 
         if (material == null) {
             player.sendMessage(buildPrefixedComponent(Component.text(input, NamedTextColor.RED)

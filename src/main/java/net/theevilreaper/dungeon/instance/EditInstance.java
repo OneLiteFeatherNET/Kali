@@ -1,7 +1,7 @@
 package net.theevilreaper.dungeon.instance;
 
-import de.icevizion.aves.util.Strings;
-import de.icevizion.aves.util.TimeFormat;
+import net.theevilreaper.aves.util.Strings;
+import net.theevilreaper.aves.util.TimeFormat;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -12,7 +12,6 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.network.packet.server.play.TimeUpdatePacket;
-import net.minestom.server.utils.PacketUtils;
 import net.minestom.server.world.DimensionType;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
@@ -75,7 +74,8 @@ public class EditInstance extends InstanceContainer {
 
         if (getTime() > MAX_TIME) {
             setTime(START_TIME);
-            PacketUtils.sendGroupedPacket(this.getPlayers(), new TimeUpdatePacket(getWorldAge(), getTime()));
+            // TODO: Fix me
+            // PacketUtils.sendGroupedPacket(this.getPlayers(), new TimeUpdatePacket(getWorldAge(), getTime()));
         }
 
         var timestamp = System.currentTimeMillis();

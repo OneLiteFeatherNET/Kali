@@ -1,10 +1,10 @@
 package net.theevilreaper.dungeon.location;
 
 import com.google.gson.GsonBuilder;
-import de.icevizion.aves.file.FileHandler;
-import de.icevizion.aves.file.GsonFileHandler;
-import de.icevizion.aves.file.gson.PositionGsonAdapter;
-import de.icevizion.aves.map.BaseMap;
+import net.theevilreaper.aves.file.FileHandler;
+import net.theevilreaper.aves.file.GsonFileHandler;
+import net.theevilreaper.aves.file.gson.PositionGsonAdapter;
+import net.theevilreaper.aves.map.BaseMap;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
