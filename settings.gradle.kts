@@ -8,69 +8,50 @@ dependencyResolutionManagement {
         }
     }
     repositories {
-        if (System.getenv("CI") != null) {
-            repositoriesMode = RepositoriesMode.PREFER_SETTINGS
-            repositories {
-                maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                maven("https://repo.htl-md.schule/repository/Gitlab-Runner/")
-                maven {
-                    val groupdId = 28 // Gitlab Group
-                    val ciApiv4Url = System.getenv("CI_API_V4_URL")
-                    url = uri("$ciApiv4Url/groups/$groupdId/-/packages/maven")
-                    name = "GitLab"
-                    credentials(HttpHeaderCredentials::class.java) {
-                        name = "Job-Token"
-                        value = System.getenv("CI_JOB_TOKEN")
-                    }
-                    authentication {
-                        create<HttpHeaderAuthentication>("header")
-                    }
+        mavenCentral()
+        maven {
+            name = "OneLiteFeatherRepository"
+            url = uri("https://repo.onelitefeather.dev/onelitefeather")
+            if (System.getenv("CI") != null) {
+                credentials {
+                    username = System.getenv("ONELITEFEATHER_MAVEN_USERNAME")
+                    password = System.getenv("ONELITEFEATHER_MAVEN_PASSWORD")
                 }
-            }
-        } else {
-            repositories {
-                maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                maven {
-                    val groupdId = 28 // Gitlab Group
-                    url = uri("https://gitlab.onelitefeather.dev/api/v4/groups/$groupdId/-/packages/maven")
-                    name = "GitLab"
-                    credentials(HttpHeaderCredentials::class.java) {
-                        name = "Private-Token"
-                        value = providers.gradleProperty("gitLabPrivateToken").get()
-                    }
-                    authentication {
-                        create<HttpHeaderAuthentication>("header")
-                    }
+            } else {
+                credentials(PasswordCredentials::class)
+                authentication {
+                    create<BasicAuthentication>("basic")
                 }
-                maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                mavenCentral()
-                maven("https://jitpack.io")
             }
         }
+        mavenLocal()
     }
     versionCatalogs {
         create("libs") {
             version("publishdata", "1.4.0")
-            version("minestom", "1.5.1")
-            version("aves", "1.6.1")
-            version("xerus", "1.3.0-SNAPSHOT")
             version("shadow", "8.3.6")
 
-            library("microtus.bom", "net.onelitefeather.microtus", "bom").versionRef("minestom")
-            library("dungeon.bom", "net.theevilreaper.dungeon.bom", "base").version("1.1.1")
+            version("bom", "1.2.3")
+            version("aonyx", "0.3.1")
 
-            library("minestom", "net.onelitefeather.microtus", "Microtus").withoutVersion()
-            library("minestom-test", "net.onelitefeather.microtus.testing", "testing").withoutVersion()
+            library("mycelium.bom", "net.onelitefeather", "mycelium-bom").versionRef("bom")
+            library("aonyx.bom", "net.onelitefeather", "aonyx-bom").versionRef("aonyx")
+
+            library("aves", "net.theevilreaper", "aves").withoutVersion()
+            library("xerus", "net.theevilreaper", "xerus").withoutVersion()
+            library("guira", "net.onelitefeather", "guira").withoutVersion()
+
+            library("minestom", "net.minestom", "minestom-snapshots").withoutVersion()
+            library("cyano", "net.onelitefeather", "cyano").withoutVersion()
+            library("adventure.minimessage", "net.kyori", "adventure-text-minimessage").withoutVersion()
             library("junit.api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
             library("junit.engine", "org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+            library("junit.params", "org.junit.jupiter", "junit-jupiter-params").withoutVersion()
+            library("junit.platform.launcher", "org.junit.platform", "junit-platform-launcher").withoutVersion()
+
             library("mockito.core", "org.mockito", "mockito-core").withoutVersion()
             library("mockito.junit", "org.mockito", "mockito-junit-jupiter").withoutVersion()
 
-            library("aves", "de.icevizion.lib", "aves").versionRef("aves")
-            library("xerus", "net.theevilreaper.xerus", "xerus").versionRef("xerus")
-
-          //  library("canis", "com.github.theEvilReaper", "Canis").version("master-SNAPSHOT")
-            library("mini", "net.kyori", "adventure-text-minimessage").version("4.17.0")
             library("morphia", "dev.morphia.morphia", "morphia-core").version("2.4.14")
 
             plugin("shadow", "com.gradleup.shadow").versionRef("shadow")
