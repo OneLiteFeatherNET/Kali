@@ -54,7 +54,7 @@ dependencyResolutionManagement {
             version("minestom", "1.5.1")
             version("aves", "1.6.1")
             version("xerus", "1.3.0-SNAPSHOT")
-            version("shadow", "8.3.0")
+            version("shadow", "8.3.6")
 
             library("microtus.bom", "net.onelitefeather.microtus", "bom").versionRef("minestom")
             library("dungeon.bom", "net.theevilreaper.dungeon.bom", "base").version("1.1.1")
