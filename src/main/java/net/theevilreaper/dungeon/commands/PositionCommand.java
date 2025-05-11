@@ -8,7 +8,7 @@ import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.condition.Conditions;
 import net.minestom.server.entity.Player;
-import net.theevilreaper.dungeon.location.LocationProvider;
+import net.theevilreaper.aves.map.MapProvider;
 import org.jetbrains.annotations.NotNull;
 
 import static net.theevilreaper.dungeon.util.Messages.buildPrefixedComponent;
@@ -23,9 +23,9 @@ public class PositionCommand extends Command {
     private final Component defaultComponent =  buildPrefixedComponent(Component.text("Please use: ", NamedTextColor.GRAY)
             .append(Component.text("/pos <spawn, save>", NamedTextColor.RED)));
 
-    private final LocationProvider provider;
+    private final MapProvider provider;
 
-    public PositionCommand(@NotNull LocationProvider provider) {
+    public PositionCommand(@NotNull MapProvider provider) {
         super("position", "pos");
 
         this.provider = provider;
@@ -41,7 +41,8 @@ public class PositionCommand extends Command {
         var player = (Player) sender;
         var argument = (String) context.get("type");
 
-        if ("save".equals(argument) && this.provider.save()) {
+        //TODO: Fix me
+       /* if ("save".equals(argument) && this.provider.saveMap()) {
             player.sendMessage(buildPrefixedComponent(Component.text("Successfully saved the map", NamedTextColor.RED)));
             return;
         }
@@ -49,6 +50,6 @@ public class PositionCommand extends Command {
         if ("spawn".equals(argument)) {
             this.provider.setSpawn(player.getPosition());
             player.sendMessage(buildPrefixedComponent(Component.text("Set spawn pos", NamedTextColor.RED)));
-        }
+        }*/
     }
 }

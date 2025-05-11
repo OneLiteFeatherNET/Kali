@@ -1,11 +1,10 @@
 package net.theevilreaper.dungeon.listener;
 
 import net.minestom.server.event.player.PlayerUseItemEvent;
-import net.minestom.server.instance.Instance;
 import net.minestom.server.item.Material;
+import net.theevilreaper.aves.util.functional.PlayerConsumer;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.inventory.floor.FloorInventory;
-import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
@@ -21,15 +20,14 @@ import java.util.function.Consumer;
 public class ItemListener implements Consumer<PlayerUseItemEvent> {
 
     private final FloorInventory floorInventory;
-    private final LocationProvider locationProvider;
-    private final Instance defaultInstance;
+    private final PlayerConsumer teleportToSpawn;
 
-    public ItemListener(@NotNull FloorInventory floorInventory,
-                        @NotNull LocationProvider locationProvider,
-                        @NotNull Instance defaultInstance) {
+    public ItemListener(
+            @NotNull FloorInventory floorInventory,
+            @NotNull PlayerConsumer teleportToSpawn
+    ) {
         this.floorInventory = floorInventory;
-        this.locationProvider = locationProvider;
-        this.defaultInstance = defaultInstance;
+        this.teleportToSpawn = teleportToSpawn;
     }
 
     @Override
@@ -46,8 +44,8 @@ public class ItemListener implements Consumer<PlayerUseItemEvent> {
         }
 
         if (player.getInstance() instanceof EditInstance && item.material() == Material.BARRIER) {
-            player.setInstance(defaultInstance, this.locationProvider.getSpawnPos());
             player.getInventory().clear();
+            this.teleportToSpawn.accept(player);
         }
     }
 }
