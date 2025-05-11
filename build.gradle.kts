@@ -15,6 +15,7 @@ java {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation(platform(libs.mycelium.bom))
     implementation(platform(libs.aonyx.bom))
     implementation(libs.adventure.minimessage)

@@ -5,7 +5,6 @@ import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.inventory.RoomSelector;
-import net.theevilreaper.dungeon.location.LocationProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -25,10 +24,9 @@ public interface RoomSelectorCreator {
      */
     default @NotNull RoomSelector getSelector(
             @NotNull EditInstanceManager editInstanceManager,
-            @NotNull LocationProvider locationProvider,
             @NotNull InventoryBuilder inventoryBuilder,
             @NotNull Floor floorDTO,
             @NotNull Consumer<EditInstance> consumer) {
-        return new RoomSelector(editInstanceManager, locationProvider, floorDTO, inventoryBuilder, consumer);
+        return new RoomSelector(editInstanceManager, floorDTO, inventoryBuilder, consumer);
     }
 }

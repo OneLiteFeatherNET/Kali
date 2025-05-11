@@ -6,7 +6,6 @@ import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.inventory.InventoryType;
@@ -15,13 +14,11 @@ import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.Floor;
-import net.theevilreaper.dungeon.data.floor.FloorDTO;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
 import net.theevilreaper.dungeon.inventory.region.search.SearchInventory;
 import net.theevilreaper.dungeon.util.Items;
-import net.theevilreaper.dungeon.location.LocationProvider;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
@@ -37,20 +34,17 @@ public class RoomSelector {
     private final GlobalInventoryBuilder builder;
     private final EditInstanceManager editInstanceManager;
     private final Floor floorDTO;
-    private final Pos defaultPos;
     private final Consumer<EditInstance> editInstanceConsumer;
     private final InventoryBuilder inventoryBuilder;
     private final InventoryBuilder floorBuilder;
 
     public RoomSelector(@NotNull EditInstanceManager editInstanceManager,
-                        @NotNull LocationProvider locationProvider,
                         @NotNull Floor floorDTO,
                         @NotNull InventoryBuilder floorBuilder,
                         @NotNull Consumer<EditInstance> editInstanceConsumer) {
         this.editInstanceManager = editInstanceManager;
         this.editInstanceConsumer = editInstanceConsumer;
         this.floorBuilder = floorBuilder;
-        this.defaultPos = locationProvider.getDefaultPos().add(0, 20, 0);
         this.floorDTO = floorDTO;
         this.inventoryBuilder = floorBuilder;
         this.builder = new GlobalInventoryBuilder(Component.text("Select the room to edit"), InventoryType.CHEST_6_ROW);
@@ -127,7 +121,7 @@ public class RoomSelector {
 
         result.setClickedItem(updatedStack);
         player.closeInventory();
-        player.setInstance(editInstance, defaultPos);
+        //player.setInstance(editInstance, defaultPos);
     }
 
     private void handleClose(@NotNull Player player, int slotId, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
