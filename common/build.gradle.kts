@@ -21,6 +21,7 @@ dependencies {
     compileOnly(libs.minestom)
 
     testImplementation(libs.cyano)
+    testImplementation(libs.aves)
     testImplementation(libs.minestom)
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.params)
