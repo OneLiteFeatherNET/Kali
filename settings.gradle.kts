@@ -1,4 +1,4 @@
-rootProject.name = "Kali"
+rootProject.name = "kali"
 
 dependencyResolutionManagement {
     pluginManagement {
@@ -59,3 +59,5 @@ dependencyResolutionManagement {
         }
     }
 }
+
+include("common")

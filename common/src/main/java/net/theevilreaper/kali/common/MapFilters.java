@@ -1,4 +1,4 @@
-package net.theevilreaper.dungeon.util;
+package net.theevilreaper.kali.common;
 
 import net.theevilreaper.aves.map.MapEntry;
 import org.jetbrains.annotations.NotNull;
