@@ -25,7 +25,6 @@ import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.inventory.floor.FloorInventory;
 import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
-import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
 import net.theevilreaper.dungeon.listener.configuration.AsyncPlayerConfigurationListener;
 import net.theevilreaper.dungeon.listener.floor.FloorCreateListener;
 import net.theevilreaper.dungeon.listener.floor.FloorRemoveListener;
@@ -170,7 +169,6 @@ public class DungeonEditor implements ListenerHandling {
 
         node.addListener(FloorCreateEvent.class, new FloorCreateListener(this.floorProvider, this.floorInventory));
         node.addListener(FloorRemoveEvent.class, new FloorRemoveListener(this.floorProvider, this.floorInventory));
-        node.addListener(PlayerSearchChangeEvent.class, new SearchChangeListener());
     }
 
     /**
