@@ -3,8 +3,8 @@ package net.theevilreaper.kali.common;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
-import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
+import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerSwapItemEvent;
 import net.minestom.testing.Env;
 import net.minestom.testing.extension.MicrotusExtension;
@@ -23,7 +23,7 @@ class ListenerHandlingIntegrationTest {
         GlobalEventHandler eventHandler = env.process().eventHandler();
         listenerHandling.registerCancelListener(eventHandler);
 
-        assertTrue(eventHandler.hasListener(PlayerBlockBreakEvent.class));
+        assertTrue(eventHandler.hasListener(PlayerBlockPlaceEvent.class));
         assertTrue(eventHandler.hasListener(ItemDropEvent.class));
         assertTrue(eventHandler.hasListener(PickupItemEvent.class));
         assertTrue(eventHandler.hasListener(PlayerSwapItemEvent.class));
