@@ -4,8 +4,23 @@
     "config:base",
     ":semanticCommitsDisabled"
   ],
-  "ignoreDeps": [],
   "labels": ["Renovate"],
   "rebaseWhen": "conflicted",
-  "schedule": ["on the first day of the month"]
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": false,
+      "schedule": [
+        "before 6:00am every friday"
+      ]
+    }
+  ]
 }
