@@ -4,7 +4,6 @@ import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
@@ -16,8 +15,6 @@ import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
-import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
-import net.theevilreaper.dungeon.inventory.region.search.SearchInventory;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.util.Messages;
 import net.theevilreaper.dungeon.util.Tags;
@@ -52,20 +49,6 @@ public class RoomSelector {
 
         Items.setDecorationLine(layout, this.builder.getType());
         Items.setDecorationLine(layout, InventoryType.CHEST_1_ROW);
-
-        layout.setItem(49, ItemStack.builder(Material.HOPPER).customName(Component.text("Filter", NamedTextColor.YELLOW)).lore(Messages.FILTER_LORE).build(), (player, i, clickType, inventoryConditionResult) -> {
-            inventoryConditionResult.setCancel(true);
-
-            if (clickType == ClickType.RIGHT_CLICK) {
-                MinecraftServer.getGlobalEventHandler().call(new PlayerSearchChangeEvent(player, null));
-                return;
-            }
-
-            if (clickType == ClickType.LEFT_CLICK) {
-                new SearchInventory().open(player);
-            }
-
-        });
 
         layout.setItem(layout.getContents().length - 1, BACK_SLOT, this::handleClose);
 
@@ -115,7 +98,7 @@ public class RoomSelector {
 
         MinecraftServer.getInstanceManager().registerInstance(editInstance);
 
-        var updatedStack = result.getClickedItem().withTag(Tags.UUID_TAG, editInstance.getUniqueId());
+        var updatedStack = result.getClickedItem().withTag(Tags.UUID_TAG, editInstance.getUuid());
 
         this.editInstanceManager.add(editInstance, updatedStack);
 
