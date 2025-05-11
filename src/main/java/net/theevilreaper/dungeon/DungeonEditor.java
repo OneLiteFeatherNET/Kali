@@ -2,17 +2,13 @@ package net.theevilreaper.dungeon;
 
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
-import net.minestom.server.event.item.ItemDropEvent;
-import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
-import net.minestom.server.event.trait.CancellableEvent;
-import net.minestom.server.instance.block.BlockManager;
 import net.theevilreaper.aves.map.MapProvider;
 import net.theevilreaper.aves.util.functional.PlayerConsumer;
 import net.theevilreaper.dungeon.commands.LockCommand;
@@ -32,11 +28,16 @@ import net.theevilreaper.dungeon.inventory.region.RegionInventory;
 import net.theevilreaper.dungeon.inventory.creator.FloorCreateService;
 import net.theevilreaper.dungeon.inventory.region.search.PlayerSearchChangeEvent;
 import net.theevilreaper.dungeon.listener.configuration.AsyncPlayerConfigurationListener;
+import net.theevilreaper.dungeon.listener.floor.FloorCreateListener;
+import net.theevilreaper.dungeon.listener.floor.FloorRemoveListener;
+import net.theevilreaper.dungeon.listener.instance.EntityAddToInstanceListener;
+import net.theevilreaper.dungeon.listener.instance.EntityRemoveFromInstanceListener;
+import net.theevilreaper.dungeon.listener.player.PlayerDeathListener;
 import net.theevilreaper.dungeon.map.EditorMapProvider;
 import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
-import net.theevilreaper.dungeon.util.Messages;
+import net.theevilreaper.kali.common.ListenerHandling;
 import net.theevilreaper.kali.common.gson.GsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 1.0.0
  **/
-public class DungeonEditor {
+public class DungeonEditor implements ListenerHandling {
 
     private static final String DATABASE_FILE = "database.json";
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
@@ -112,7 +113,7 @@ public class DungeonEditor {
         this.floorInventory = new FloorInventory(editInstanceManager, floorProvider, floorCreateService, containerConsumer);
         this.registerEvents();
         this.registerCommands();
-        this.registerBlockHandlers();
+        this.registerCancelListener(MinecraftServer.getGlobalEventHandler());
         LOGGER.info("Successfully loaded the editor extension for the dungeon");
 
         MinecraftServer.getSchedulerManager().buildShutdownTask(this::terminate);
@@ -146,69 +147,31 @@ public class DungeonEditor {
         }
     }
 
-    private void registerBlockHandlers() {
-        BlockManager blockManager = MinecraftServer.getBlockManager();
-        /*blockManager.registerHandler("minecraft:skull", SkullHandler::new);
-        blockManager.registerHandler("minecraft:sign", SignHandler::new);
-        blockManager.registerHandler("minecraft:banner", BannerHandler::new);
-        blockManager.registerHandler("minecraft:beacon", BeaconHandler::new);*/
-    }
-
     /**
      * Registers some listener as global listener into the server event node.
      */
     private void registerEvents() {
-        Consumer<CancellableEvent> cancelConsumer = event -> event.setCancelled(true);
-        var node = MinecraftServer.getGlobalEventHandler();
+        GlobalEventHandler node = MinecraftServer.getGlobalEventHandler();
         node.addListener(AsyncPlayerConfigurationEvent.class, new AsyncPlayerConfigurationListener(
                 this.mapProvider.getActiveInstance()
         ));
 
-        PlayerConsumer teleportToSpawn = player -> {
-            this.mapProvider.teleportToSpawn(player, true);
-        };
+        PlayerConsumer teleportToSpawn = player -> this.mapProvider.teleportToSpawn(player, true);
 
         node.addListener(PlayerSpawnEvent.class, new PlayerSpawnListener(teleportToSpawn, sidebarViewer, items));
         node.addListener(PlayerBlockBreakEvent.class, new BlockBreakListener(regionInventory));
         node.addListener(PlayerChatEvent.class, new PlayerChatListener());
-        node.addListener(PlayerBlockPlaceEvent.class, cancelConsumer::accept);
 
-        node.addListener(AddEntityToInstanceEvent.class, event -> {
-           if (event.getInstance() instanceof EditInstance editInstance && event.getEntity() instanceof Player player) {
-               editInstance.add(player);
-               this.items.setEditItems(player);
-           }
-        });
+        node.addListener(AddEntityToInstanceEvent.class, new EntityAddToInstanceListener(this.items));
+        node.addListener(RemoveEntityFromInstanceEvent.class, new EntityRemoveFromInstanceListener());
 
-        node.addListener(RemoveEntityFromInstanceEvent.class, event -> {
-            if (event.getInstance() instanceof EditInstance editInstance && event.getEntity() instanceof Player player) {
-                editInstance.remove(player);
-                player.getInventory().clear();
-                editInstance.switchOwner();
-            }
-        });
-
-        node.addListener(ItemDropEvent.class, cancelConsumer::accept);
-        node.addListener(PickupItemEvent.class, cancelConsumer::accept);
-        node.addListener(PlayerDeathEvent.class, event -> event.setChatMessage(Component.empty()));
+        node.addListener(PlayerDeathEvent.class, new PlayerDeathListener());
         node.addListener(PlayerDisconnectEvent.class, new PlayerDisconnectListener(this.sidebarViewer,this.floorCreateService));
         node.addListener(PlayerUseItemEvent.class, new ItemListener(floorInventory, teleportToSpawn));
         node.addListener(PlayerBlockInteractEvent.class, new BlockInteractListener(regionInventory));
 
-        node.addListener(FloorCreateEvent.class, event -> {
-            if (!event.getFloor().hasName()) {
-                event.getPlayer().sendMessage(Messages.ABORT_FLOOR_CREATION);
-                return;
-            }
-            this.floorProvider.addFloor(event.getFloor());
-            this.floorInventory.updateInventoryLayout();
-        });
-
-        node.addListener(FloorRemoveEvent.class, floorRemoveEvent -> {
-            this.floorProvider.removeFloor(floorRemoveEvent.getFloor());
-            this.floorInventory.updateInventoryLayout();
-        });
-
+        node.addListener(FloorCreateEvent.class, new FloorCreateListener(this.floorProvider, this.floorInventory));
+        node.addListener(FloorRemoveEvent.class, new FloorRemoveListener(this.floorProvider, this.floorInventory));
         node.addListener(PlayerSearchChangeEvent.class, new SearchChangeListener());
     }
 
