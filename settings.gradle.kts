@@ -41,7 +41,7 @@ dependencyResolutionManagement {
             library("xerus", "net.theevilreaper", "xerus").withoutVersion()
             library("guira", "net.onelitefeather", "guira").withoutVersion()
 
-            library("minestom", "net.minestom", "minestom-snapshots").withoutVersion()
+            library("minestom", "net.minestom", "minestom").withoutVersion()
             library("cyano", "net.onelitefeather", "cyano").withoutVersion()
             library("adventure.minimessage", "net.kyori", "adventure-text-minimessage").withoutVersion()
             library("junit.api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
