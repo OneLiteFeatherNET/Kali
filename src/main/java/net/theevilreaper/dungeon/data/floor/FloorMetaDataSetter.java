@@ -1,11 +1,11 @@
 package net.theevilreaper.dungeon.data.floor;
 
 import net.kyori.adventure.key.Key;
+import net.minestom.server.component.DataComponents;
 import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
-import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.util.Messages;
@@ -73,7 +73,7 @@ public interface FloorMetaDataSetter {
      * @return the updated item
      */
     private @NotNull ItemStack update(@NotNull ItemStack itemStack, @NotNull String input) {
-        var newItem = ItemStack.builder(itemStack.material()).customName(itemStack.get(ItemComponent.CUSTOM_NAME));
+        var newItem = ItemStack.builder(itemStack.material()).customName(itemStack.get(DataComponents.CUSTOM_NAME));
         newItem.lore(Component.empty(), Component.text("Value: " + input));
         return newItem.build();
     }
