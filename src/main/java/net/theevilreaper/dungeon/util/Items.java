@@ -1,15 +1,18 @@
 package net.theevilreaper.dungeon.util;
 
+import net.minestom.server.component.DataComponents;
+import net.minestom.server.item.component.TooltipDisplay;
 import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
-import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * The class includes all items for the dungeon editor.
@@ -33,7 +36,7 @@ public class Items {
     public Items() {
         this.regionTool = ItemStack.builder(Material.GOLDEN_AXE)
                 .customName(Component.text("Regions", NamedTextColor.YELLOW))
-                .set(ItemComponent.HIDE_TOOLTIP)
+                .set(DataComponents.TOOLTIP_DISPLAY, new TooltipDisplay(true, Set.of()))
                 .set(Tags.ITEM_TAGS, REGION_ITEM)
                 .build();
         this.floorSelector = ItemStack.builder(Material.CARTOGRAPHY_TABLE)
@@ -75,7 +78,6 @@ public class Items {
      * @param type The given type from the inventory
      */
     public static void setDecorationLine(@NotNull InventoryLayout layout, @NotNull InventoryType type) {
-        //Check.argCondition(type.getSize() != layout.getSize(), "The given type size is higher then the size from the inventory");
         layout.setItems(LayoutCalculator.fillRow(type), DECORATION);
     }
 }
