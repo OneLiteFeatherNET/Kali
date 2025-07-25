@@ -2,9 +2,9 @@ package net.theevilreaper.dungeon.map;
 
 import net.minestom.server.MinecraftServer;
 import net.theevilreaper.aves.file.GsonFileHandler;
-import net.theevilreaper.aves.map.AbstractMapProvider;
 import net.theevilreaper.aves.map.BaseMap;
 import net.theevilreaper.aves.map.MapEntry;
+import net.theevilreaper.aves.map.provider.AbstractMapProvider;
 import net.theevilreaper.kali.common.MapFilters;
 import net.theevilreaper.kali.common.gson.GsonUtil;
 import org.jetbrains.annotations.NotNull;

@@ -8,7 +8,7 @@ import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.condition.Conditions;
 import net.minestom.server.entity.Player;
-import net.theevilreaper.aves.map.MapProvider;
+import net.theevilreaper.aves.map.provider.MapProvider;
 import org.jetbrains.annotations.NotNull;
 
 import static net.theevilreaper.dungeon.util.Messages.buildPrefixedComponent;

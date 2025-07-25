@@ -8,7 +8,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.instance.AddEntityToInstanceEvent;
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent;
 import net.minestom.server.event.player.*;
-import net.theevilreaper.aves.map.MapProvider;
+import net.theevilreaper.aves.map.provider.MapProvider;
 import net.theevilreaper.aves.util.functional.PlayerConsumer;
 import net.theevilreaper.dungeon.commands.LockCommand;
 import net.theevilreaper.dungeon.commands.PositionCommand;
