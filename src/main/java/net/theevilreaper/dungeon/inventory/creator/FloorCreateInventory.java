@@ -1,7 +1,9 @@
 package net.theevilreaper.dungeon.inventory.creator;
 
+import net.minestom.server.inventory.click.Click;
 import net.theevilreaper.aves.inventory.InventoryLayout;
 import net.theevilreaper.aves.inventory.PersonalInventoryBuilder;
+import net.theevilreaper.aves.inventory.click.ClickHolder;
 import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,8 +12,6 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.inventory.InventoryType;
-import net.minestom.server.inventory.click.ClickType;
-import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
@@ -21,6 +21,8 @@ import net.theevilreaper.dungeon.data.floor.FloorMetaDataSetter;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 /**
  * @author theEvilReaper
@@ -95,22 +97,22 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         this.inputGui.register();
     }
 
-    private void handleInputClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleInputClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
         player.closeInventory();
         MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inputGui.getInventory(), player, false));
     }
 
-    private void handleCreateClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleCreateClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
         this.clickedSlot = slot;
         player.closeInventory();
         this.inputGui.open();
     }
 
-    private void handleCloseClick(@NotNull Player player, int slot, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
+    private void handleCloseClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
         player.setTag(CLOSE, 1);
-        result.setCancel(true);
+        result.accept(ClickHolder.cancelClick());
         player.closeInventory();
         MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(this.inventory.getInventory(), player, false));
     }

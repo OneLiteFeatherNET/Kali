@@ -1,7 +1,9 @@
 package net.theevilreaper.dungeon.inventory;
 
+import net.minestom.server.inventory.click.Click;
 import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.click.ClickHolder;
 import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,7 +14,6 @@ import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
-import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.FloorGetMethod;
@@ -23,6 +24,7 @@ import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * The inventory is used to ask the player if he really wants to delete the floor or not.
@@ -63,37 +65,38 @@ public class DeleteInventory {
     }
 
     /**
-     * Handles what happened when a player abort the deletion of a floor.
+     * Handles what happened when a player clicks on the abort button.
      *
-     * @param player    the player who is involved
-     * @param clickType the clickType as {@link ClickType} reference
-     * @param slotID    the involved slot
-     * @param result    the result
+     * @param player the player who is involved
+     * @param slot   the clicked slot as int
+     * @param click  the clickType as {@link ClickType} reference
+     * @param stack  the clicked item as {@link ItemStack}
+     * @param result the result
      */
-    private void handleAbortClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleAbortClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
         MinecraftServer.getGlobalEventHandler().call(new InventoryCloseEvent(player.getOpenInventory(), player, false));
         player.closeInventory();
         player.removeTag(Tags.FLOOR_ID);
     }
 
     /**
-     * Handles the click logic to delete a floor.
+     * Handles what happened when a player clicks on the confirm button.
      *
-     * @param player    the player who is involved
-     * @param clickType the clickType as {@link ClickType} reference
-     * @param slotID    the involved slot
-     * @param result    the result
+     * @param player the player who is involved
+     * @param slot   the clicked slot as int
+     * @param click  the clickType as {@link ClickType} reference
+     * @param stack  the clicked item as {@link ItemStack}
+     * @param result the result
      */
-    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
-        var item = result.getClickedItem();
+    private void handleClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
 
-        if (item.isAir()) return;
+        if (stack.isAir()) return;
 
         var event = new InventoryCloseEvent(player.getOpenInventory(), player, false);
 
-        if (item.material() == Material.LIME_DYE) {
+        if (stack.material() == Material.LIME_DYE) {
             var floorAsName = player.getTag(Tags.FLOOR_ID);
             var floor = floorGetMethod.getFloorById(floorAsName);
 

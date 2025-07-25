@@ -1,15 +1,16 @@
 package net.theevilreaper.dungeon.inventory.floor;
 
+import net.minestom.server.component.DataComponents;
+import net.minestom.server.inventory.click.Click;
 import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryLayout;
+import net.theevilreaper.aves.inventory.click.ClickHolder;
 import net.theevilreaper.aves.inventory.util.LayoutCalculator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.ClickType;
-import net.minestom.server.inventory.condition.InventoryConditionResult;
-import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.theevilreaper.dungeon.data.floor.FloorProvider;
@@ -85,16 +86,18 @@ public class FloorInventory implements RoomSelectorCreator {
         this.inventoryBuilder.invalidateDataLayout();
     }
 
+
     /**
-     * Handles the click for the item which allows the creation of new floors.
+     * Handles the click logic for the create floor button in the inventory.
      *
      * @param player    the player who clicked on the item
-     * @param clickType the given {@link ClickType}
-     * @param slotID    the slot id
-     * @param result    the {@link InventoryConditionResult} from the click
+     * @param slot      the slot id
+     * @param click the given {@link ClickType}
+     * @param stack     the {@link ItemStack} which was clicked
+     * @param result    the {@link Consumer} which will be called with a {@link ClickHolder} to handle the result of the click
      */
-    private void handleCreateClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleCreateClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
         // if (!player.hasPermission(Permissions.CREATE_FLOOR_PERMISSION)) return;
         player.closeInventory();
         var inventory = this.floorCreateService.getCreateBuilder(player);
@@ -104,31 +107,30 @@ public class FloorInventory implements RoomSelectorCreator {
     /**
      * Handles the click logic for a floor item in the inventory.
      *
-     * @param player    the player who clicked on the item
-     * @param clickType the given {@link ClickType}
-     * @param slotID    the slot id
-     * @param result    the {@link InventoryConditionResult} from the click
+     * @param player the player who clicked on the item
+     * @param slot   the slot id
+     * @param click  the given {@link ClickType}
+     * @param stack  the {@link ItemStack} which was clicked
+     * @param result the {@link Consumer} which will be called with a {@link ClickHolder} to handle the result of the click
      */
-    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleClick(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
 
-        var item = result.getClickedItem();
-
-
-        if (clickType == ClickType.RIGHT_CLICK && /*player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION) &&*/ item.get(ItemComponent.CUSTOM_NAME) != null) {
-            deleteInventory.openInventory(player, item.getTag(Tags.FLOOR_ID));
+        if (click instanceof Click.Right && /*player.hasPermission(Permissions.DELETE_FLOOR_PERMISSION) &&*/ stack.get(DataComponents.CUSTOM_NAME) != null) {
+            deleteInventory.openInventory(player, stack.getTag(Tags.FLOOR_ID));
             return;
         }
 
-        if (clickType == ClickType.LEFT_CLICK) {
-            if (item.isAir() || item.material() == Items.DECORATION.material() || !item.hasTag(Tags.FLOOR_ID)) return;
-            var floor = floorProvider.getFloorById(item.getTag(Tags.FLOOR_ID));
+        if (click instanceof Click.Left) {
+            if (stack.isAir() || stack.material() == Items.DECORATION.material() || !stack.hasTag(Tags.FLOOR_ID))
+                return;
+            var floor = floorProvider.getFloorById(stack.getTag(Tags.FLOOR_ID));
             if (floor == null) {
                 player.sendMessage("the clicked floor is null");
                 return;
             }
 
-            var inventory = this.mappedSelectors.computeIfAbsent(item, stack -> getSelector(editInstanceManager, inventoryBuilder, floor, consumer));
+            var inventory = this.mappedSelectors.computeIfAbsent(stack, stack1 -> getSelector(editInstanceManager, inventoryBuilder, floor, consumer));
             player.closeInventory();
             inventory.open(player);
         }

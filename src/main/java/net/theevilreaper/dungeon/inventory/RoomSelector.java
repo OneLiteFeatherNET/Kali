@@ -1,5 +1,6 @@
 package net.theevilreaper.dungeon.inventory;
 
+import net.minestom.server.inventory.click.Click;
 import net.theevilreaper.aves.inventory.GlobalInventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryBuilder;
 import net.theevilreaper.aves.inventory.InventoryLayout;
@@ -8,16 +9,13 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.inventory.InventoryType;
-import net.minestom.server.inventory.click.ClickType;
-import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.theevilreaper.aves.inventory.click.ClickHolder;
 import net.theevilreaper.dungeon.data.floor.Floor;
 import net.theevilreaper.dungeon.instance.EditInstance;
 import net.theevilreaper.dungeon.instance.EditInstanceManager;
 import net.theevilreaper.dungeon.util.Items;
-import net.theevilreaper.dungeon.util.Messages;
-import net.theevilreaper.dungeon.util.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -69,46 +67,8 @@ public class RoomSelector {
         player.openInventory(this.builder.getInventory());
     }
 
-    /**
-     * Handles the internal click logic for each item in the inventory
-     */
-    private void handleClick(@NotNull Player player, int slotID, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
-
-        var clickedItem = result.getClickedItem();
-
-        if (clickedItem.material() == Material.AIR) return;
-
-        if (clickedItem.hasTag(Tags.UUID_TAG)) {
-            var instance = this.editInstanceManager.get(clickedItem.getTag(Tags.UUID_TAG));
-
-            if (instance == null) return;
-
-            if (instance.isLocked()) {
-                player.sendMessage(Messages.LOCKED_INSTANCE);
-                return;
-            }
-
-            player.setInstance(instance);
-            return;
-        }
-
-        EditInstance editInstance = new EditInstance(editInstanceConsumer);
-        editInstance.setOwner(player);
-
-        MinecraftServer.getInstanceManager().registerInstance(editInstance);
-
-        var updatedStack = result.getClickedItem().withTag(Tags.UUID_TAG, editInstance.getUuid());
-
-        this.editInstanceManager.add(editInstance, updatedStack);
-
-        result.setClickedItem(updatedStack);
-        player.closeInventory();
-        //player.setInstance(editInstance, defaultPos);
-    }
-
-    private void handleClose(@NotNull Player player, int slotId, @NotNull ClickType clickType, @NotNull InventoryConditionResult result) {
-        result.setCancel(true);
+    private void handleClose(@NotNull Player player, int slot, @NotNull Click click, @NotNull ItemStack stack, @NotNull Consumer<ClickHolder> result) {
+        result.accept(ClickHolder.cancelClick());
         this.callCloseEvent(player);
         player.closeInventory();
         player.openInventory(floorBuilder.getInventory());
