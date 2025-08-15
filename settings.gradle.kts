@@ -29,7 +29,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             version("publishdata", "1.4.0")
-            version("shadow", "8.3.9")
+            version("shadow", "9.0.2")
 
             version("bom", "1.4.3")
             version("aonyx", "0.5.2")
