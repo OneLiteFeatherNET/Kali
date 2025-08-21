@@ -20,15 +20,15 @@ public final class FloorRemoveEvent implements PlayerEvent {
     /**
      * Create a new instance of the {@link FloorCreateEvent}.
      * @param player the player who is involved into the event
-     * @param floorDTO the floor who is involved into the event
+     * @param floor the floor who is involved into the event
      */
-    public FloorRemoveEvent(@NotNull Player player, @NotNull Floor floorDTO) {
+    public FloorRemoveEvent(@NotNull Player player, @NotNull Floor floor) {
         this.player = player;
-        this.floorDTO = floorDTO;
+        this.floorDTO = floor;
     }
 
     /**
-     * Returns the involved {@link FloorDTO}.
+     * Returns the involved {@link Floor}.
      * @return the given floor
      */
     @NotNull

@@ -61,7 +61,7 @@ public final class FloorCreateEvent implements PlayerEvent, CancellableEvent {
     }
 
     /**
-     * Returns the involved {@link FloorDTO}.
+     * Returns the involved {@link Floor}.
      * @return the given floor
      */
     @NotNull
