@@ -52,8 +52,6 @@ dependencyResolutionManagement {
             library("mockito.core", "org.mockito", "mockito-core").withoutVersion()
             library("mockito.junit", "org.mockito", "mockito-junit-jupiter").withoutVersion()
 
-            library("morphia", "dev.morphia.morphia", "morphia-core").version("2.5.0")
-
             plugin("shadow", "com.gradleup.shadow").versionRef("shadow")
             plugin("publishdata", "de.chojo.publishdata").versionRef("publishdata")
         }
