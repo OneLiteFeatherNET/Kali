@@ -1,7 +1,5 @@
 package net.theevilreaper.dungeon;
 
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -17,7 +15,6 @@ import net.theevilreaper.dungeon.commands.TestCommand;
 import net.theevilreaper.dungeon.commands.ToolCommand;
 import net.theevilreaper.dungeon.commands.TransferCommand;
 import net.theevilreaper.dungeon.data.floor.FloorProvider;
-import net.theevilreaper.dungeon.database.MongoDatabase;
 import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.event.FloorRemoveEvent;
 import net.theevilreaper.dungeon.instance.EditInstance;
@@ -36,7 +33,6 @@ import net.theevilreaper.dungeon.util.Items;
 import net.theevilreaper.dungeon.listener.*;
 import net.theevilreaper.dungeon.sidebar.SidebarViewer;
 import net.theevilreaper.kali.common.ListenerHandling;
-import net.theevilreaper.kali.common.gson.GsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +49,6 @@ import java.util.function.Consumer;
  **/
 public class DungeonEditor implements ListenerHandling {
 
-    private static final String DATABASE_FILE = "database.json";
     private static final Logger LOGGER = LoggerFactory.getLogger(DungeonEditor.class);
     private FloorProvider floorProvider;
     private FloorInventory floorInventory;
@@ -62,7 +57,6 @@ public class DungeonEditor implements ListenerHandling {
     private final RegionInventory regionInventory;
     private final SidebarViewer sidebarViewer;
     private final MapProvider mapProvider;
-    private MongoDatabase mongoDatabase;
 
     private final Consumer<EditInstance> containerConsumer;
 
@@ -91,21 +85,8 @@ public class DungeonEditor implements ListenerHandling {
 
     public void initialize() {
         this.initDirectories();
-        JsonObject databaseObject = null;
 
-        try (JsonReader reader = new JsonReader(Files.newBufferedReader(Paths.get("").resolve(DATABASE_FILE)))) {
-            databaseObject = GsonUtil.DEFAULT_GSON.fromJson(reader, JsonObject.class);
-        } catch (IOException e) {
-            LOGGER.error("Failed to read the database file", e);
-        }
-
-        if (databaseObject != null) {
-            this.mongoDatabase = new MongoDatabase(databaseObject);
-        } else {
-            LOGGER.error("Failed to read the database file. The editor will not work without a database.");
-            return;
-        }
-        this.floorProvider = new FloorProvider(mongoDatabase);
+        this.floorProvider = new FloorProvider();
         this.floorCreateService = new FloorCreateService();
         this.floorInventory = new FloorInventory(editInstanceManager, floorProvider, floorCreateService, containerConsumer);
         this.registerEvents();
@@ -117,10 +98,6 @@ public class DungeonEditor implements ListenerHandling {
     }
 
     public void terminate() {
-        if (this.mongoDatabase != null) {
-            this.mongoDatabase.disconnect();
-            LOGGER.info("Disconnecting from the database!");
-        }
     }
 
     private void initDirectories() {
