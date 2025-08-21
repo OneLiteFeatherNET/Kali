@@ -1,10 +1,7 @@
 package net.theevilreaper.dungeon.data.floor;
 
-import net.theevilreaper.dungeon.database.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,32 +17,17 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public final class FloorProvider implements FloorGetMethod {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FloorProvider.class);
     private final Lock lock;
     private Set<Floor> floorDTOS;
-    private FloorDatabaseHandler floorDatabaseHandler;
 
-    public FloorProvider(MongoDatabase database) {
-        if (database != null) {
-            this.floorDatabaseHandler = new FloorDatabaseHandler(database);
-        }
+    public FloorProvider() {
         this.lock = new ReentrantLock();
         this.floorDTOS = loadFloors();
     }
 
     private Set<Floor> loadFloors() {
         this.floorDTOS = new HashSet<>();
-
-        if (this.floorDatabaseHandler == null) {
-            return floorDTOS;
-        }
-
-        var databaseFloors = this.floorDatabaseHandler.getAllEntries();
-
-        if (!databaseFloors.isEmpty())  {
-            this.floorDTOS.addAll(databaseFloors);
-            LOGGER.info("Found {} Floor objects in the database", floorDTOS.size());
-        }
+        //TODO: Reimplement this later
         return floorDTOS;
     }
 
@@ -53,8 +35,6 @@ public final class FloorProvider implements FloorGetMethod {
         try {
             lock.lock();
             if (this.floorDTOS.add(floorDTO)) {
-                if (this.floorDatabaseHandler == null) return;
-                this.floorDatabaseHandler.insert(floorDTO);
             }
         } finally {
             lock.unlock();
@@ -65,8 +45,6 @@ public final class FloorProvider implements FloorGetMethod {
         try {
             lock.lock();
             if (this.floorDTOS.remove(floorDTO)) {
-                if (this.floorDatabaseHandler == null) return;
-                this.floorDatabaseHandler.delete(floorDTO);
             }
         } finally {
             lock.unlock();

@@ -20,8 +20,6 @@ dependencies {
     implementation(platform(libs.aonyx.bom))
     implementation(libs.adventure.minimessage)
 
-    implementation(libs.morphia)
-
     compileOnly(libs.aves)
     compileOnly(libs.minestom)
 

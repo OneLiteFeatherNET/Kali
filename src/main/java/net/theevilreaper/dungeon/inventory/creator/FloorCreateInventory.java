@@ -9,16 +9,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.inventory.InventoryCloseEvent;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
-import net.theevilreaper.dungeon.data.floor.Floor;
-import net.theevilreaper.dungeon.data.floor.FloorDTO;
-import net.theevilreaper.dungeon.data.floor.FloorMetaDataSetter;
-import net.theevilreaper.dungeon.event.FloorCreateEvent;
 import net.theevilreaper.dungeon.util.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +25,7 @@ import java.util.function.Consumer;
  * @since 1.0.0
  **/
 @SuppressWarnings("java:S3252")
-public class FloorCreateInventory implements FloorMetaDataSetter {
+public class FloorCreateInventory {
 
     private static final Tag<Integer> CLOSE = Tag.Integer("close");
     private static final Component INV_TITLE = Component.text("Create floor");
@@ -51,19 +46,13 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
     private final PersonalInventoryBuilder inputGui;
     private String name;
     private int clickedSlot;
-    private final FloorDTO.Builder builder;
 
     public FloorCreateInventory(@NotNull Player owningPlayer) {
-        this.builder = Floor.builder();
         this.inventory = new PersonalInventoryBuilder(INV_TITLE, InventoryType.CHEST_3_ROW, owningPlayer);
 
         var layout = InventoryLayout.fromType(this.inventory.getType());
 
         layout.setItems(LayoutCalculator.quad(0, layout.getContents().length - 1), Items.DECORATION);
-        layout.setItem(METADATA_NAME_SLOT, CHANGE_NAME, this::handleCreateClick);
-        layout.setItem(METADATA_EXTERNAL_NAME_SLOT, CHANGE_EXTERNAL, this::handleCreateClick);
-        layout.setItem(METADATA_ID_SLOT, CHANGE_ID, this::handleCreateClick);
-        layout.setItem(METADATA_MATERIAL_SLOT, CHANGE_ICON, this::handleCreateClick);
         layout.setItem(layout.getContents().length - 1, SAVE, this::handleCloseClick);
 
         this.inventory.setLayout(layout);
@@ -72,7 +61,7 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
 
             if (player.hasTag(CLOSE)) {
                 player.removeTag(CLOSE);
-                EventDispatcher.call(new FloorCreateEvent(player, this.builder.build()));
+             //   EventDispatcher.call(new FloorCreateEvent(player, this.builder.build()));
             }
         });
 
@@ -84,13 +73,6 @@ public class FloorCreateInventory implements FloorMetaDataSetter {
         createLayout.setItem(2, NAME_TAG, this::handleInputClick);
         this.inputGui.setLayout(createLayout);
         this.inputGui.setCloseFunction(event -> {
-            if (this.clickedSlot == METADATA_NAME_SLOT || this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT) {
-                this.setName(name, builder, owningPlayer, layout, this.clickedSlot == METADATA_EXTERNAL_NAME_SLOT);
-            } else if (this.clickedSlot == METADATA_ID_SLOT) {
-                this.setFloorId(name, builder, owningPlayer, layout);
-            } else {
-                this.setMaterial(name, builder, owningPlayer, layout);
-            }
             inventory.invalidateLayout();
             inventory.open();
         });
