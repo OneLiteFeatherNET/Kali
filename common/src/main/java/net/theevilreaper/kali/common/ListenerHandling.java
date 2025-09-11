@@ -7,7 +7,6 @@ import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerSwapItemEvent;
-import org.jetbrains.annotations.NotNull;
 
 import static net.theevilreaper.aves.inventory.util.InventoryConstants.CANCELLABLE_EVENT;
 
@@ -25,7 +24,7 @@ public interface ListenerHandling {
      *
      * @param eventNode the event node to register the listeners
      */
-    default void registerCancelListener(@NotNull EventNode<Event> eventNode) {
+    default void registerCancelListener(EventNode<Event> eventNode) {
         eventNode.addListener(PlayerBlockPlaceEvent.class, CANCELLABLE_EVENT::accept);
         eventNode.addListener(ItemDropEvent.class, CANCELLABLE_EVENT::accept);
         eventNode.addListener(PickupItemEvent.class, CANCELLABLE_EVENT::accept);

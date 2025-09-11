@@ -1,7 +1,6 @@
 package net.theevilreaper.kali.common;
 
 import net.theevilreaper.aves.map.MapEntry;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +33,7 @@ public final class MapFilters {
      * @param mapEntry the map entry to check
      * @return true if the map is a lobby map
      */
-    public static boolean isLobbyMap(@NotNull MapEntry mapEntry) {
+    public static boolean isLobbyMap(MapEntry mapEntry) {
         return mapEntry.getDirectoryRoot().endsWith(LOBBY_SUFFIX);
     }
 
@@ -44,7 +43,7 @@ public final class MapFilters {
      * @param mapStream a stream of paths
      * @return a list which contains different maps which are available for the game
      */
-    public static @NotNull List<MapEntry> filterMapsForGame(@NotNull Stream<Path> mapStream) {
+    public static List<MapEntry> filterMapsForGame(Stream<Path> mapStream) {
         return mapStream
                 .filter(Files::isDirectory)
                 .filter(path -> Files.exists(path.resolve(REGION_FOLDER)))
@@ -59,7 +58,7 @@ public final class MapFilters {
      * @param mapStream a stream of paths
      * @return a list which contains different maps which are available for the setup
      */
-    public static @NotNull List<MapEntry> filterMapsForSetup(@NotNull Stream<Path> mapStream) {
+    public static List<MapEntry> filterMapsForSetup(Stream<Path> mapStream) {
         return mapStream
                 .filter(Files::isDirectory)
                 .filter(path -> Files.exists(path.resolve(REGION_FOLDER)))
