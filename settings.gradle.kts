@@ -31,7 +31,7 @@ dependencyResolutionManagement {
             version("publishdata", "1.4.0")
             version("shadow", "9.3.1")
 
-            version("bom", "1.6.0")
+            version("bom", "1.6.1")
             version("aonyx", "0.6.0")
 
             library("mycelium.bom", "net.onelitefeather", "mycelium-bom").versionRef("bom")
