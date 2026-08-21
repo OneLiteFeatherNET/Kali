@@ -6,7 +6,14 @@
   "packages": {
     ".": {
       "package-name": "Kali",
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "build.gradle.kts"
+        }
+      ]
     }
-  }
+  },
+  "bootstrap-sha": "ff1bba6e48d63209536385e65c216a63fc21dd77"
 }
