@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>OneLiteFeatherNET/renovate:default(OneLiteFeatherNET/core-team)",
-    "github>OneLiteFeatherNET/renovate:minestom",
-    ":semanticCommitsDisabled"
+    "github>OneLiteFeatherNET/renovate:minestom"
   ]
 }
