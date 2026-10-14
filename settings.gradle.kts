@@ -28,7 +28,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            version("publishdata", "1.4.0")
+            version("publishdata", "2.0.0")
             version("shadow", "9.6.1")
 
             version("bom", "1.8.9")
